@@ -3,14 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/onboard_bloc.dart';
 
-class ActionButtons extends StatefulWidget {
+class ActionButtons extends StatelessWidget {
   const ActionButtons({super.key});
 
-  @override
-  State<ActionButtons> createState() => _ActionButtonsState();
-}
-
-class _ActionButtonsState extends State<ActionButtons> {
   @override
   Widget build(BuildContext context) {
     return Column(
