@@ -69,8 +69,8 @@ class OnboardButton extends StatelessWidget {
           text,
           style: Theme.of(context)
               .textTheme
-              .bodyMedium
-              ?.copyWith(color: Colors.white),
+              .bodySmall
+              ?.copyWith(color: Colors.white, letterSpacing: 3),
         ),
       ),
     );
