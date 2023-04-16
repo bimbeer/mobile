@@ -8,6 +8,7 @@ class OnboardBloc extends Bloc<OnboardEvent, OnboardState> {
   OnboardBloc() : super(OnboardInitial()) {
     on<OnboardCreateAccountPressed>(_onCreateAccountPressed);
     on<OnboardSignInPressed>(_onSignInPressed);
+    on<OnboardReset>(_onReset);
   }
 
   void _onCreateAccountPressed(
@@ -19,4 +20,8 @@ class OnboardBloc extends Bloc<OnboardEvent, OnboardState> {
       OnboardSignInPressed event, Emitter<OnboardState> emit) {
     emit(OnboardSignIn());
   }
+
+  void _onReset(OnboardReset event, Emitter<OnboardState> emit) {
+    emit(OnboardInitial());
+  } 
 }

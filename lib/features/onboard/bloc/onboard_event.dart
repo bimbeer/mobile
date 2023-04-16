@@ -10,3 +10,5 @@ abstract class OnboardEvent extends Equatable {
 class OnboardCreateAccountPressed extends OnboardEvent { }
 
 class OnboardSignInPressed extends OnboardEvent { }
+
+class OnboardReset extends OnboardEvent { }

@@ -28,6 +28,7 @@ class OnboardView extends StatelessWidget {
         } else if (state is OnboardSignIn) {
           Navigator.of(context).pushNamed(state.route);
         }
+        context.read<OnboardBloc>().add(OnboardReset());
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).canvasColor,
