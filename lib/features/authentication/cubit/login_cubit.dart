@@ -25,7 +25,15 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> logInWithCredentials() async {
-    if (state.email.isNotValid || state.password.isNotValid) return;
+    if (state.email.value == '' || state.password.value == '') {
+      emit(state.copyWith(
+        errorMessage: 'All fields are required.',
+        status: FormzSubmissionStatus.failure,
+      ));
+      return;
+    } else if (state.email.isNotValid || state.password.isNotValid) {
+      return;
+    }
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
     try {
       await _authenticaionRepository.logInWithEmailAndPassword(
