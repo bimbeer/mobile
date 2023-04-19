@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
 import '../cubit/login_cubit.dart';
+import 'widgets/facebook_login_button.dart';
 import 'widgets/form_buttons_divider.dart';
 import 'widgets/google_login_button.dart';
 
@@ -40,6 +41,10 @@ class LoginForm extends StatelessWidget {
           height: 20,
         ),
         const GoogleLoginButton(),
+        const SizedBox(
+          height: 10,
+        ),
+        const FacebookLoginButton(),
       ]),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:bimbeer/features/authentication/data/repositories/authentication_failure_handlers.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
@@ -43,9 +44,26 @@ class AuthenticaionRepository {
 
       await _firebaseAuth.signInWithCredential(credential);
     } on firebase_auth.FirebaseAuthException catch (e) {
-      throw LogInWithEmailAndPasswordFailure.fromCode(e.code);
+      throw LogInWithSocialFailure.fromCode(e.code);
     } catch (e) {
-      throw const LogInWithEmailAndPasswordFailure();
+      throw const LogInWithSocialFailure();
+    }
+  }
+
+  Future<void> logInWithFacebook() async {
+    try {
+      final LoginResult loginResult = await FacebookAuth.instance.login();
+
+      final firebase_auth.OAuthCredential facebookAuthCredential =
+          firebase_auth.FacebookAuthProvider.credential(
+              loginResult.accessToken!.token);
+
+      await firebase_auth.FirebaseAuth.instance
+          .signInWithCredential(facebookAuthCredential);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      throw LogInWithSocialFailure.fromCode(e.code);
+    } catch (e) {
+      throw const LogInWithSocialFailure();
     }
   }
 

@@ -5,6 +5,7 @@ import 'package:formz/formz.dart';
 
 import '../cubit/login_cubit.dart';
 import '../cubit/sign_up_cubit.dart';
+import 'widgets/facebook_login_button.dart';
 import 'widgets/form_buttons_divider.dart';
 
 class SignUpForm extends StatelessWidget {
@@ -63,6 +64,10 @@ class SignUpForm extends StatelessWidget {
           height: 20,
         ),
         const GoogleLoginButton(),
+        const SizedBox(
+          height: 10,
+        ),
+        const FacebookLoginButton(),
       ]),
     );
   }

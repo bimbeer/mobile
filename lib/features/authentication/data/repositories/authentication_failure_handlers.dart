@@ -64,49 +64,49 @@ class LogInWithEmailAndPasswordFailure implements Exception {
 
 class LogOutFailure implements Exception {}
 
-class LogInWithGoogleFailure implements Exception {
-  const LogInWithGoogleFailure([
+class LogInWithSocialFailure implements Exception {
+  const LogInWithSocialFailure([
     this.message = 'An unknown exception occurred.',
   ]);
 
   final String message;
 
-  factory LogInWithGoogleFailure.fromCode(String code) {
+  factory LogInWithSocialFailure.fromCode(String code) {
     switch (code) {
       case 'account-exists-with-different-credential':
-        return const LogInWithGoogleFailure(
+        return const LogInWithSocialFailure(
           'Account exists with different credentials.',
         );
       case 'invalid-credential':
-        return const LogInWithGoogleFailure(
+        return const LogInWithSocialFailure(
           'The credential received is malformed or has expired.',
         );
       case 'operation-not-allowed':
-        return const LogInWithGoogleFailure(
+        return const LogInWithSocialFailure(
           'Operation is not allowed.  Please contact support.',
         );
       case 'user-disabled':
-        return const LogInWithGoogleFailure(
+        return const LogInWithSocialFailure(
           'This user has been disabled. Please contact support for help.',
         );
       case 'user-not-found':
-        return const LogInWithGoogleFailure(
+        return const LogInWithSocialFailure(
           'Email is not found, please create an account.',
         );
       case 'wrong-password':
-        return const LogInWithGoogleFailure(
+        return const LogInWithSocialFailure(
           'Incorrect password, please try again.',
         );
       case 'invalid-verification-code':
-        return const LogInWithGoogleFailure(
+        return const LogInWithSocialFailure(
           'The credential verification code received is invalid.',
         );
       case 'invalid-verification-id':
-        return const LogInWithGoogleFailure(
+        return const LogInWithSocialFailure(
           'The credential verification ID received is invalid.',
         );
       default:
-        return const LogInWithGoogleFailure();
+        return const LogInWithSocialFailure();
     }
   }
 }
