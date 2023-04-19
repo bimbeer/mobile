@@ -1,9 +1,9 @@
 import 'package:bimbeer/app_bloc_observer.dart';
+import 'package:bimbeer/features/authentication/data/repositories/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'app.dart';
-import 'core/router/app_router.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -12,5 +12,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   Bloc.observer = const AppBlocObserver();
-  runApp(App(appRouter: AppRouter(),));
+
+  final authenticationRepository = AuthenticaionRepository();
+  await authenticationRepository.user.first;
+
+  runApp(App(authenticationRepository: authenticationRepository));
 }
