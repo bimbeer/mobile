@@ -4,6 +4,7 @@ import 'package:formz/formz.dart';
 
 import '../data/repositories/authentication_failure_handlers.dart';
 import '../data/repositories/authentication_repository.dart';
+import '../models/form_inputs/confirmed_password.dart';
 import '../models/form_inputs/email.dart';
 import '../models/form_inputs/password.dart';
 
@@ -23,15 +24,40 @@ class SignUpCubit extends Cubit<SignUpState> {
 
   void passwordChanged(String value) {
     final password = Password.dirty(value);
+    final confirmedPassword = ConfirmedPassword.dirty(
+        password: password.value, value: state.confirmedPassword.value);
     emit(
       state.copyWith(
         password: password,
+        confirmedPassword: confirmedPassword,
       ),
     );
   }
 
+  void confirmedPasswordChanged(String value) {
+    final confirmedPassword = ConfirmedPassword.dirty(
+      password: state.password.value,
+      value: value,
+    );
+    emit(state.copyWith(
+      confirmedPassword: confirmedPassword,
+    ));
+  }
+
   Future<void> signUpFormSubmitted() async {
-    if (state.email.isNotValid || state.password.isNotValid) return;
+    if (state.email.value == '' ||
+        state.password.value == '' ||
+        state.confirmedPassword.value == '') {
+      emit(state.copyWith(
+        errorMessage: 'All fields are required.',
+        status: FormzSubmissionStatus.failure,
+      ));
+      return;
+    } else if (state.email.isNotValid ||
+        state.password.isNotValid ||
+        state.confirmedPassword.isNotValid) {
+      return;
+    }
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
     try {
       await _authenticaionRepository.signUp(

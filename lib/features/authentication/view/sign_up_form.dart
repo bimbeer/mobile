@@ -48,6 +48,10 @@ class SignUpForm extends StatelessWidget {
         ),
         _PasswordInput(),
         const SizedBox(
+          height: 10,
+        ),
+        _ConfirmPasswordInput(),
+        const SizedBox(
           height: 20,
         ),
         _SignUpButton(),
@@ -78,7 +82,7 @@ class _EmailInput extends StatelessWidget {
             decoration: InputDecoration(
                 errorText:
                     state.email.isNotValid && state.email.value.isNotEmpty
-                        ? 'invalid email'
+                        ? 'Invalid email'
                         : null,
                 constraints: const BoxConstraints(maxWidth: 300),
                 hintText: 'Email',
@@ -104,10 +108,38 @@ class _PasswordInput extends StatelessWidget {
             decoration: InputDecoration(
                 errorText:
                     state.password.isNotValid && state.password.value.isNotEmpty
-                        ? 'invalid password'
+                        ? 'Invalid password'
                         : null,
                 constraints: const BoxConstraints(maxWidth: 300),
                 hintText: 'Password',
+                contentPadding: const EdgeInsets.only(left: 20),
+                filled: true,
+                fillColor: Theme.of(context).inputDecorationTheme.fillColor));
+      },
+    );
+  }
+}
+
+class _ConfirmPasswordInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SignUpCubit, SignUpState>(
+      buildWhen: (previous, current) =>
+          previous.password != current.password ||
+          previous.confirmedPassword != current.confirmedPassword,
+      builder: (context, state) {
+        return TextField(
+            key: const Key('signUpForm_confirmedPasswordInput_textField'),
+            onChanged: (confirmPassword) =>
+                context.read<SignUpCubit>().confirmedPasswordChanged(confirmPassword),
+            obscureText: true,
+            decoration: InputDecoration(
+                errorText:
+                    state.confirmedPassword.isNotValid && state.password.value.isNotEmpty
+                        ? 'Passwords do not match'
+                        : null,
+                constraints: const BoxConstraints(maxWidth: 300),
+                hintText: 'Confirm Password',
                 contentPadding: const EdgeInsets.only(left: 20),
                 filled: true,
                 fillColor: Theme.of(context).inputDecorationTheme.fillColor));
