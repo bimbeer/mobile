@@ -59,7 +59,7 @@ class _EmailInput extends StatelessWidget {
             decoration: InputDecoration(
                 errorText:
                     state.email.isNotValid && state.email.value.isNotEmpty
-                        ? 'invalid email'
+                        ? 'Invalid email'
                         : null,
                 constraints: const BoxConstraints(maxWidth: 300),
                 hintText: 'Email',
@@ -85,7 +85,7 @@ class _PasswordInput extends StatelessWidget {
             decoration: InputDecoration(
                 errorText:
                     state.password.isNotValid && state.password.value.isNotEmpty
-                        ? 'invalid password'
+                        ? 'Invalid password'
                         : null,
                 constraints: const BoxConstraints(maxWidth: 300),
                 hintText: 'Password',
