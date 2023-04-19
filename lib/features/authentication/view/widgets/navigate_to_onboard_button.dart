@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class ExitButton extends StatelessWidget {
-  const ExitButton({super.key});
+class NavigateToOnboardButton extends StatelessWidget {
+  const NavigateToOnboardButton({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        Navigator.of(context).pop();
+        Navigator.of(context).popAndPushNamed('/');
       },
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(),
