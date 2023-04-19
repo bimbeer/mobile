@@ -4,8 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 
-import '../models/email.dart';
-import '../models/password.dart';
+import '../models/form_inputs/email.dart';
+import '../models/form_inputs/password.dart';
 
 part 'login_state.dart';
 

@@ -22,27 +22,25 @@ class LoginForm extends StatelessWidget {
                 content: Text(state.errorMessage ?? 'Authentication Failure')));
         }
       },
-      child: Form(
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          _EmailInput(),
-          const SizedBox(
-            height: 10,
-          ),
-          _PasswordInput(),
-          const SizedBox(
-            height: 20,
-          ),
-          _LoginButton(),
-          const SizedBox(
-            height: 50,
-          ),
-          const FormButtonsDivider(),
-          const SizedBox(
-            height: 20,
-          ),
-          const GoogleLoginButton(),
-        ]),
-      ),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        _EmailInput(),
+        const SizedBox(
+          height: 10,
+        ),
+        _PasswordInput(),
+        const SizedBox(
+          height: 20,
+        ),
+        _LoginButton(),
+        const SizedBox(
+          height: 50,
+        ),
+        const FormButtonsDivider(),
+        const SizedBox(
+          height: 20,
+        ),
+        const GoogleLoginButton(),
+      ]),
     );
   }
 }

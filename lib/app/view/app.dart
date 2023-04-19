@@ -2,9 +2,9 @@ import 'package:bimbeer/core/presentation/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'core/router/app_router.dart';
-import 'features/authentication/bloc/app_bloc.dart';
-import 'features/authentication/data/repositories/authentication_repository.dart';
+import '../../core/router/app_router.dart';
+import '../../features/authentication/data/repositories/authentication_repository.dart';
+import '../bloc/app_bloc.dart';
 
 class App extends StatelessWidget {
   const App(

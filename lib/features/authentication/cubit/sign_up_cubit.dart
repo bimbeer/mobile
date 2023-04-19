@@ -4,8 +4,8 @@ import 'package:formz/formz.dart';
 
 import '../data/repositories/authentication_failure_handlers.dart';
 import '../data/repositories/authentication_repository.dart';
-import '../models/email.dart';
-import '../models/password.dart';
+import '../models/form_inputs/email.dart';
+import '../models/form_inputs/password.dart';
 
 part 'sign_up_state.dart';
 

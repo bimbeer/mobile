@@ -3,7 +3,7 @@ import 'package:bimbeer/features/authentication/data/repositories/authentication
 import 'package:bloc/bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'app.dart';
+import 'app/view/app.dart';
 import 'firebase_options.dart';
 
 void main() async {

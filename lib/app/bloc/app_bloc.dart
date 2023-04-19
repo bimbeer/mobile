@@ -4,7 +4,7 @@ import 'package:bimbeer/features/authentication/data/repositories/authentication
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../models/user.dart';
+import '../../features/authentication/models/user.dart';
 
 part 'app_event.dart';
 part 'app_state.dart';
