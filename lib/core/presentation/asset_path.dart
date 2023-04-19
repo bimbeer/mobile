@@ -1,5 +1,5 @@
 class AssetPath {
-  final beerLogo = 'assets/icons/logo.ico';
-  final googleLogo = 'assets/images/g-logo.png';
-  final facebookLogo = 'assets/images/f-logo.png';
+  static const beerLogo = 'assets/icons/logo.ico';
+  static const googleLogo = 'assets/images/g-logo.png';
+  static const facebookLogo = 'assets/images/f-logo.png';
 }

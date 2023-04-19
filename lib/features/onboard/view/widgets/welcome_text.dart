@@ -12,7 +12,7 @@ class WelcomeText extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Image.asset(
-          AssetPath().beerLogo,
+          AssetPath.beerLogo,
           height: 60,
         ),
         const SizedBox(
