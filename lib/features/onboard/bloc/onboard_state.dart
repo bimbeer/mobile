@@ -10,14 +10,14 @@ abstract class OnboardState extends Equatable {
 class OnboardInitial extends OnboardState {}
 
 class OnboardCreateAccount extends OnboardState {
-  final route = '/create-account';
+  final route = AppRoute.createAccount;
 
   @override
   List<Object> get props => [route];
 }
 
 class OnboardSignIn extends OnboardState {
-  final route = '/sign-in';
+  final route = AppRoute.signIn;
 
   @override
   List<Object> get props => [route];

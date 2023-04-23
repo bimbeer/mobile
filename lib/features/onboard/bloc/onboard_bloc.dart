@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../core/router/app_router.dart';
+
 part 'onboard_event.dart';
 part 'onboard_state.dart';
 
