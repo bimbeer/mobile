@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/login_cubit.dart';
 import '../data/repositories/authentication_repository.dart';
 import 'login_form.dart';
-import 'widgets/navigate_to_onboard_button.dart';
+import '../../../core/presentation/widgets/pop_page_button.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -31,7 +31,7 @@ class LoginView extends StatelessWidget {
             alignment: Alignment.topRight,
             child: Padding(
               padding: EdgeInsets.fromLTRB(0, 50, 20, 0),
-              child: NavigateToOnboardButton(),
+              child: PopPageButton(),
             ),
           ),
           Align(
