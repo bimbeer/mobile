@@ -4,23 +4,48 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/router/app_router.dart';
 import '../../features/authentication/data/repositories/authentication_repository.dart';
+import '../../features/navigation/cubit/navigation_cubit.dart';
+import '../../features/profile/bloc/personal_info_bloc.dart';
+import '../../features/profile/bloc/profile_bloc.dart';
+import '../../features/profile/data/repositories/profile_repository.dart';
+import '../../features/profile/view/profile_page.dart';
 import '../bloc/app_bloc.dart';
 
 class App extends StatelessWidget {
-  const App(
-      {super.key, required AuthenticaionRepository authenticationRepository})
-      : _authenticationRepository = authenticationRepository;
+  App(
+      {super.key,
+      required AuthenticaionRepository authenticationRepository,
+      required ProfileRepository profileRepository})
+      : _authenticationRepository = authenticationRepository,
+        _profileRepository = profileRepository;
 
   final AuthenticaionRepository _authenticationRepository;
+  final ProfileRepository _profileRepository;
+  late final ProfileBloc _profileBloc = ProfileBloc(profileRepository: _profileRepository);
+  late final PersonalInfoBloc _personalInfoBloc =
+     PersonalInfoBloc(profileBloc: _profileBloc);
+  late final AppBloc _appBloc = AppBloc(
+    authenticationRepository: _authenticationRepository,
+    profileRepository: _profileRepository,
+    profileBloc: _profileBloc,
+  );
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: _authenticationRepository,
-      child: BlocProvider(
-        create: (_) => AppBloc(
-          authenticationRepository: _authenticationRepository,
-        ),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: _authenticationRepository),
+        RepositoryProvider.value(value: _profileRepository),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: _personalInfoBloc),
+          BlocProvider.value(value: _profileBloc),
+          BlocProvider.value(value: _appBloc),
+          BlocProvider(
+            create: (_) => NavigationCubit(),
+          ),
+        ],
         child: AppView(appRouter: AppRouter()),
       ),
     );
@@ -36,6 +61,7 @@ class AppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      home: const ProfilePage(),
       onGenerateRoute: _appRouter.onGenerateRoute,
       title: 'BimBeer',
       theme: lightTheme,
