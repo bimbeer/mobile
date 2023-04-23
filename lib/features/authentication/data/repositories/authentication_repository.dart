@@ -21,6 +21,10 @@ class AuthenticaionRepository {
     });
   }
 
+  User get currentUser {
+    return _firebaseAuth.currentUser?.toUser ?? User.empty;
+  }
+
   Future<void> signUp({required String email, required String password}) async {
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(
