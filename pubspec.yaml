@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   bloc: ^8.1.1
+  cloud_firestore: ^4.5.2
   equatable: ^2.0.5
   firebase_auth: ^4.4.1
   firebase_core: ^2.9.0
@@ -19,6 +20,7 @@ dependencies:
   formz: ^0.6.0
   google_fonts: ^4.0.3
   google_sign_in: ^6.1.0
+  numberpicker: ^2.1.2
 
 dev_dependencies:
   flutter_test:
