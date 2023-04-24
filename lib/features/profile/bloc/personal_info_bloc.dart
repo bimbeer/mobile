@@ -56,6 +56,9 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
     final gender = event.profile.gender != null
         ? Gender.dirty(event.profile.gender!)
         : const Gender.pure();
+    final interest = event.profile.interest != null
+        ? Interest.dirty(event.profile.interest!)
+        : const Interest.pure();
 
     emit(state.copyWith(
       username: username,
@@ -64,6 +67,7 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
       age: age,
       description: description,
       gender: gender,
+      interest: interest,
     ));
   }
 
