@@ -47,7 +47,6 @@ class PersonalInfoView extends StatelessWidget {
         ),
       ],
       child: Scaffold(
-        backgroundColor: Theme.of(context).canvasColor,
         body: SafeArea(
             child: SingleChildScrollView(
           child: Column(children: [

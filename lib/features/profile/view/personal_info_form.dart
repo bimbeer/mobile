@@ -45,7 +45,10 @@ class PersonalInfoForm extends StatelessWidget {
         const SizedBox(
           height: 20,
         ),
-        const Center(child: _SavePersonalInfoButton())
+        const Center(child: _SavePersonalInfoButton()),
+        const SizedBox(
+          height: 40,
+        ),
       ],
     );
   }
@@ -79,8 +82,7 @@ class _UsernameInput extends StatelessWidget {
               decoration: InputDecoration(
                   errorText: state.username.error?.message,
                   contentPadding: const EdgeInsets.only(left: 20),
-                  filled: true,
-                  fillColor: Theme.of(context).inputDecorationTheme.fillColor),
+                  filled: true,),
             );
           })
     ]);
@@ -115,8 +117,7 @@ class _FirstNameInput extends StatelessWidget {
               decoration: InputDecoration(
                   errorText: state.firstName.error?.message,
                   contentPadding: const EdgeInsets.only(left: 20),
-                  filled: true,
-                  fillColor: Theme.of(context).inputDecorationTheme.fillColor),
+                  filled: true,),
             );
           })
     ]);
@@ -151,8 +152,7 @@ class _SecondNameInput extends StatelessWidget {
               decoration: InputDecoration(
                   errorText: state.lastName.error?.message,
                   contentPadding: const EdgeInsets.only(left: 20),
-                  filled: true,
-                  fillColor: Theme.of(context).inputDecorationTheme.fillColor),
+                  filled: true,),
             );
           })
     ]);
@@ -184,7 +184,6 @@ class _AgeInput extends StatelessWidget {
                 errorText: state.lastName.error?.message,
                 contentPadding: const EdgeInsets.only(left: 20),
                 filled: true,
-                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
               ),
             );
           },
@@ -260,8 +259,7 @@ class _DescriptionInput extends StatelessWidget {
               decoration: InputDecoration(
                   errorText: state.description.error?.message,
                   contentPadding: const EdgeInsets.all(20),
-                  filled: true,
-                  fillColor: Theme.of(context).inputDecorationTheme.fillColor),
+                  filled: true,),
             );
           })
     ]);
@@ -292,7 +290,6 @@ class _GenderInput extends StatelessWidget {
                 errorText: state.gender.error?.message,
                 contentPadding: const EdgeInsets.only(left: 20),
                 filled: true,
-                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
               ),
             );
           },
@@ -390,7 +387,6 @@ class _InterestInput extends StatelessWidget {
                 errorText: state.interest.error?.message,
                 contentPadding: const EdgeInsets.only(left: 20),
                 filled: true,
-                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
               ),
             );
           },
