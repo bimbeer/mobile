@@ -12,6 +12,7 @@ dependencies:
   equatable: ^2.0.5
   firebase_auth: ^4.4.1
   firebase_core: ^2.9.0
+  firebase_storage: ^11.1.1
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.2
@@ -20,6 +21,9 @@ dependencies:
   formz: ^0.6.0
   google_fonts: ^4.0.3
   google_sign_in: ^6.1.0
+  http: ^0.13.5
+  image_cropper: ^3.0.2
+  image_picker: ^0.8.7+4
   numberpicker: ^2.1.2
 
 dev_dependencies:

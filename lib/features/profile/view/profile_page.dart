@@ -1,7 +1,10 @@
 import 'package:bimbeer/features/navigation/view/navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/router/app_router.dart';
+import '../bloc/profile_bloc.dart';
+import 'widgets/avatar.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -12,9 +15,14 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
 
+  @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,18 +30,23 @@ class ProfileView extends StatelessWidget {
       body: SafeArea(
           child: SingleChildScrollView(
         child: Column(children: [
-          NavBar(),
-          CircleAvatar(
-            radius: 80,
-          ),
-          SizedBox(
+          const NavBar(),
+          const Avatar(),
+          const SizedBox(
             height: 20,
           ),
-          Text(
-            'Name, 30',
-            style: Theme.of(context).textTheme.titleLarge,
+          BlocBuilder<ProfileBloc, ProfileState>(
+            builder: (context, state) {
+              String? name = state.profile.username;
+              int? age = state.profile.age;
+
+              return Text(
+                '$name, $age',
+                style: Theme.of(context).textTheme.titleLarge,
+              );
+            },
           ),
-          SizedBox(
+          const SizedBox(
             height: 40,
           ),
           GridView.count(
@@ -42,11 +55,25 @@ class ProfileView extends StatelessWidget {
             mainAxisSpacing: 30,
             shrinkWrap: true,
             crossAxisCount: 2,
-            children: [
-              ButtonTile(label: 'Profile', icon: Icons.edit, route: AppRoute.editProfile,), 
-              ButtonTile(label: 'Distance', icon: Icons.map, route: AppRoute.editProfile), 
-              ButtonTile(label: 'Settings', icon: Icons.settings,route: AppRoute.editProfile,), 
-              ButtonTile(label: 'Beers', icon: Icons.wine_bar, route: AppRoute.editProfile), 
+            children: const [
+              ButtonTile(
+                label: 'Profile',
+                icon: Icons.edit,
+                route: AppRoute.editProfile,
+              ),
+              ButtonTile(
+                  label: 'Distance',
+                  icon: Icons.map,
+                  route: AppRoute.editProfile),
+              ButtonTile(
+                label: 'Settings',
+                icon: Icons.settings,
+                route: AppRoute.editProfile,
+              ),
+              ButtonTile(
+                  label: 'Beers',
+                  icon: Icons.wine_bar,
+                  route: AppRoute.editProfile),
             ],
           ),
         ]),
@@ -71,27 +98,34 @@ class ButtonTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridTile(
       child: ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed(route);
-          },
-          child: Column(
-            children: [
-              Expanded(
-                  flex: 1,
-                  child: Center(
-                      child: Text(
-                    label,
-                  ))),
-              Expanded(
-                  flex: 1,
-                  child: Center(
-                      child: Icon(
-                    icon,
-                    size: 30,
-                  ))),
-              Expanded(flex: 1, child: Container())
-            ],
-          )),
+        onPressed: () {
+          Navigator.of(context).pushNamed(route);
+        },
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(20), 
+          ),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+                flex: 1,
+                child: Center(
+                    child: Text(
+                  label,
+                ))),
+            Expanded(
+                flex: 1,
+                child: Center(
+                    child: Icon(
+                  icon,
+                  size: 30,
+                ))),
+            Expanded(flex: 1, child: Container())
+          ],
+        ),
+      ),
     );
   }
 }

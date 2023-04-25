@@ -8,6 +8,7 @@ import '../../features/navigation/cubit/navigation_cubit.dart';
 import '../../features/profile/bloc/personal_info_bloc.dart';
 import '../../features/profile/bloc/profile_bloc.dart';
 import '../../features/profile/data/repositories/profile_repository.dart';
+import '../../features/profile/data/repositories/storage_repository.dart';
 import '../../features/profile/view/profile_page.dart';
 import '../bloc/app_bloc.dart';
 
@@ -15,12 +16,16 @@ class App extends StatelessWidget {
   App(
       {super.key,
       required AuthenticaionRepository authenticationRepository,
-      required ProfileRepository profileRepository})
+      required ProfileRepository profileRepository, 
+      required StorageRepository storageRepository})
       : _authenticationRepository = authenticationRepository,
-        _profileRepository = profileRepository;
+        _profileRepository = profileRepository, 
+        _storageRepository = storageRepository;
 
   final AuthenticaionRepository _authenticationRepository;
   final ProfileRepository _profileRepository;
+  final StorageRepository _storageRepository;
+
   late final ProfileBloc _profileBloc = ProfileBloc(profileRepository: _profileRepository);
   late final PersonalInfoBloc _personalInfoBloc =
      PersonalInfoBloc(profileBloc: _profileBloc);
@@ -36,6 +41,7 @@ class App extends StatelessWidget {
       providers: [
         RepositoryProvider.value(value: _authenticationRepository),
         RepositoryProvider.value(value: _profileRepository),
+        RepositoryProvider.value(value: _storageRepository),
       ],
       child: MultiBlocProvider(
         providers: [
