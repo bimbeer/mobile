@@ -22,7 +22,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   void _onProfileModified(ProfileModified event, Emitter<ProfileState> emit) {
-    // Update profile using repo
     _profileRepository.editProfile(id: event.userId, profile: event.profile);
     emit(ProfileState.modified(event.profile));
   }
