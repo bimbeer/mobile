@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/router/app_router.dart';
 import '../../features/authentication/data/repositories/authentication_repository.dart';
+import '../../features/beer/bloc/beer_bloc.dart';
 import '../../features/navigation/cubit/navigation_cubit.dart';
 import '../../features/profile/bloc/personal_info_bloc.dart';
 import '../../features/profile/bloc/profile_bloc.dart';
@@ -51,6 +52,9 @@ class App extends StatelessWidget {
           BlocProvider(
             create: (_) => NavigationCubit(),
           ),
+          BlocProvider(
+            create: (_) => BeerBloc(storageRepository: _storageRepository, profileBloc: _profileBloc, appState: _appBloc.state),
+          ),
         ],
         child: AppView(appRouter: AppRouter()),
       ),
@@ -72,7 +76,7 @@ class AppView extends StatelessWidget {
       title: 'BimBeer',
       theme: lightTheme,
       darkTheme: darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
     );
   }
 }

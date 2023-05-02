@@ -73,7 +73,7 @@ class _ProfileViewState extends State<ProfileView> {
               ButtonTile(
                   label: 'Beers',
                   icon: Icons.wine_bar,
-                  route: AppRoute.editProfile),
+                  route: AppRoute.pickBeer),
             ],
           ),
         ]),
@@ -102,9 +102,12 @@ class ButtonTile extends StatelessWidget {
           Navigator.of(context).pushNamed(route);
         },
         style: ElevatedButton.styleFrom(
+          textStyle: Theme.of(context)
+              .textTheme
+              .labelLarge
+              ?.copyWith(fontWeight: FontWeight.bold),
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(20), 
+            borderRadius: BorderRadius.circular(20),
           ),
         ),
         child: Column(

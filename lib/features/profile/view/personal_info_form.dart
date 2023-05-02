@@ -181,7 +181,7 @@ class _AgeInput extends StatelessWidget {
                 agePickerModal(context);
               },
               decoration: InputDecoration(
-                errorText: state.lastName.error?.message,
+                errorText: state.age.error?.message,
                 contentPadding: const EdgeInsets.only(left: 20),
                 filled: true,
               ),
@@ -493,8 +493,9 @@ class _SavePersonalInfoButton extends StatelessWidget {
             },
             style: buttonStyle,
             child: Stack(
-              children: [
-                const Align(
+              children: const [
+                Align(
+                  heightFactor: 1.5,
                   alignment: Alignment.centerLeft,
                   child: Icon(Icons.save),
                 ),
@@ -502,10 +503,6 @@ class _SavePersonalInfoButton extends StatelessWidget {
                   heightFactor: 1.5,
                   child: Text(
                     'Save Changes',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: Colors.white, letterSpacing: 2),
                   ),
                 ),
               ],

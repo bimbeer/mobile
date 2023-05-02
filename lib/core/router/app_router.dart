@@ -5,6 +5,7 @@ import 'package:bimbeer/features/profile/view/personal_info_page.dart';
 import 'package:bimbeer/features/profile/view/profile_page.dart';
 import 'package:flutter/material.dart';
 
+import '../../features/beer/view/beer_page.dart';
 import '../../features/onboard/view/onboard_page.dart';
 
 class AppRouter {
@@ -22,6 +23,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const ProfilePage());
       case AppRoute.editProfile:
         return MaterialPageRoute(builder: (_) => const PersonalInfoPage());
+      case AppRoute.pickBeer:
+        return MaterialPageRoute(builder: (_) => const BeerPage());
       default:
         return null;
     }
@@ -35,4 +38,5 @@ abstract class AppRoute {
   static const String pairs = '/pairs';
   static const String profile = '/profile';
   static const String editProfile = '/edit-profile';
+  static const String pickBeer = '/pick-beer';
 }

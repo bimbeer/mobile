@@ -6,6 +6,7 @@ import 'color_schemes.g.dart';
 final _font = TextStyle(fontFamily: GoogleFonts.poppins().fontFamily);
 
 final darkTheme = ThemeData.dark().copyWith(
+    canvasColor: const Color(0xFF1a202c),
     colorScheme: darkColorScheme,
     textTheme: TextTheme(
       displaySmall: _font,
@@ -23,9 +24,8 @@ final darkTheme = ThemeData.dark().copyWith(
       labelSmall: _font,
       labelMedium: _font,
       labelLarge: _font,
-    )
-);
+    ));
 
 final lightTheme = darkTheme.copyWith(
-    colorScheme: lightColorScheme,
+  colorScheme: lightColorScheme,
 );
