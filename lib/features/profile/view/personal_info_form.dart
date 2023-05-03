@@ -4,6 +4,7 @@ import 'package:numberpicker/numberpicker.dart';
 
 import '../../../app/bloc/app_bloc.dart';
 import '../bloc/personal_info_bloc.dart';
+import '../bloc/profile_bloc.dart';
 
 class PersonalInfoForm extends StatelessWidget {
   const PersonalInfoForm({super.key});
@@ -12,7 +13,7 @@ class PersonalInfoForm extends StatelessWidget {
   Widget build(BuildContext context) {
     context
         .read<PersonalInfoBloc>()
-        .add(PersonalInfoLoaded(context.read<AppBloc>().state.profile));
+        .add(PersonalInfoLoaded(context.read<ProfileBloc>().state.profile));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,9 +81,10 @@ class _UsernameInput extends StatelessWidget {
               },
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                  errorText: state.username.error?.message,
-                  contentPadding: const EdgeInsets.only(left: 20),
-                  filled: true,),
+                errorText: state.username.error?.message,
+                contentPadding: const EdgeInsets.only(left: 20),
+                filled: true,
+              ),
             );
           })
     ]);
@@ -115,9 +117,10 @@ class _FirstNameInput extends StatelessWidget {
               },
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                  errorText: state.firstName.error?.message,
-                  contentPadding: const EdgeInsets.only(left: 20),
-                  filled: true,),
+                errorText: state.firstName.error?.message,
+                contentPadding: const EdgeInsets.only(left: 20),
+                filled: true,
+              ),
             );
           })
     ]);
@@ -150,9 +153,10 @@ class _SecondNameInput extends StatelessWidget {
               },
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                  errorText: state.lastName.error?.message,
-                  contentPadding: const EdgeInsets.only(left: 20),
-                  filled: true,),
+                errorText: state.lastName.error?.message,
+                contentPadding: const EdgeInsets.only(left: 20),
+                filled: true,
+              ),
             );
           })
     ]);
@@ -257,9 +261,10 @@ class _DescriptionInput extends StatelessWidget {
               keyboardType: TextInputType.text,
               maxLines: 3,
               decoration: InputDecoration(
-                  errorText: state.description.error?.message,
-                  contentPadding: const EdgeInsets.all(20),
-                  filled: true,),
+                errorText: state.description.error?.message,
+                contentPadding: const EdgeInsets.all(20),
+                filled: true,
+              ),
             );
           })
     ]);
@@ -346,9 +351,8 @@ class _GenderInput extends StatelessWidget {
                         maxValue: 2,
                         textMapper: (numberText) => numberToGender(numberText),
                         onChanged: (value) => {
-                          context
-                              .read<PersonalInfoBloc>()
-                              .add(GenderChanged(numberToGender(value.toString())))
+                          context.read<PersonalInfoBloc>().add(
+                              GenderChanged(numberToGender(value.toString())))
                         },
                       );
                     },
@@ -374,7 +378,8 @@ class _InterestInput extends StatelessWidget {
           child: Text('INTEREST'),
         ),
         BlocBuilder<PersonalInfoBloc, PersonalInfoState>(
-          buildWhen: (previous, current) => previous.interest != current.interest,
+          buildWhen: (previous, current) =>
+              previous.interest != current.interest,
           builder: (context, state) {
             return TextFormField(
               controller: TextEditingController(text: state.interest.value),
@@ -441,11 +446,11 @@ class _InterestInput extends StatelessWidget {
                         value: interestToNumber(state.interest.value),
                         minValue: 0,
                         maxValue: 2,
-                        textMapper: (numberText) => numberToInterest(numberText),
+                        textMapper: (numberText) =>
+                            numberToInterest(numberText),
                         onChanged: (value) => {
-                          context
-                              .read<PersonalInfoBloc>()
-                              .add(InterestChanged(numberToInterest(value.toString())))
+                          context.read<PersonalInfoBloc>().add(InterestChanged(
+                              numberToInterest(value.toString())))
                         },
                       );
                     },

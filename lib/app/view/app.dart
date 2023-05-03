@@ -13,8 +13,8 @@ import '../../features/profile/data/repositories/storage_repository.dart';
 import '../../features/profile/view/profile_page.dart';
 import '../bloc/app_bloc.dart';
 
-class App extends StatelessWidget {
-  App(
+class App extends StatefulWidget {
+  const App(
       {super.key,
       required AuthenticaionRepository authenticationRepository,
       required ProfileRepository profileRepository,
@@ -27,42 +27,61 @@ class App extends StatelessWidget {
   final ProfileRepository _profileRepository;
   final StorageRepository _storageRepository;
 
-  late final ProfileBloc _profileBloc =
-      ProfileBloc(profileRepository: _profileRepository);
-  late final PersonalInfoBloc _personalInfoBloc =
-      PersonalInfoBloc(profileBloc: _profileBloc);
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
   late final AppBloc _appBloc = AppBloc(
-    authenticationRepository: _authenticationRepository,
-    profileRepository: _profileRepository,
-    profileBloc: _profileBloc,
+    authenticationRepository: widget._authenticationRepository,
   );
+
+  late final ProfileBloc _profileBloc = ProfileBloc(
+      profileRepository: widget._profileRepository,
+      authenticationRepository: widget._authenticationRepository)
+    ..add(ProfileFetched(profile: widget._profileRepository.currentProfile));
+
+  late final PersonalInfoBloc _personalInfoBloc =
+      PersonalInfoBloc(profileBloc: _profileBloc)
+        ..add(PersonalInfoLoaded(widget._profileRepository.currentProfile));
+
+  late final _beerBloc = BeerListBloc(
+      storageRepository: widget._storageRepository,
+      profileRepository: widget._profileRepository,
+      authenticationRepository: widget._authenticationRepository)
+    ..add(BeerListFetched());
+
+  late final _navigationCubit = NavigationCubit();
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider.value(value: _authenticationRepository),
-        RepositoryProvider.value(value: _profileRepository),
-        RepositoryProvider.value(value: _storageRepository),
+        RepositoryProvider.value(value: widget._authenticationRepository),
+        RepositoryProvider.value(value: widget._profileRepository),
+        RepositoryProvider.value(value: widget._storageRepository),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider.value(value: _personalInfoBloc),
           BlocProvider.value(value: _profileBloc),
           BlocProvider.value(value: _appBloc),
-          BlocProvider(
-            create: (_) => NavigationCubit(),
-          ),
-          BlocProvider(
-            create: (_) => BeerListBloc(
-                storageRepository: _storageRepository,
-                profileRepository: _profileRepository,
-                authenticationRepository: _authenticationRepository),
-          ),
+          BlocProvider.value(value: _navigationCubit),
+          BlocProvider.value(value: _beerBloc),
         ],
         child: AppView(appRouter: AppRouter()),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _appBloc.close();
+    _profileBloc.close();
+    _personalInfoBloc.close();
+    _beerBloc.close();
+    _navigationCubit.close();
+    super.dispose();
   }
 }
 

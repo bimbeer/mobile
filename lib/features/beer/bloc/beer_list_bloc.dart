@@ -67,11 +67,8 @@ class BeerListBloc extends Bloc<BeerListEvent, BeerListState> {
 
       List<Beer> updatedSelectedBeers = List.from(state.selectedBeers);
 
-      if (updatedSelectedBeers
-          .where((beer) => beer == event.beer)
-          .isNotEmpty) {
-        updatedSelectedBeers
-            .removeWhere((beer) => beer == event.beer);
+      if (updatedSelectedBeers.where((beer) => beer == event.beer).isNotEmpty) {
+        updatedSelectedBeers.removeWhere((beer) => beer == event.beer);
         profile.beers?.removeWhere((beer) => beer == event.beer);
       } else {
         updatedSelectedBeers.add(event.beer);

@@ -10,9 +10,6 @@ class BeerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (context.read<BeerListBloc>().state.status == BeerListStatus.initial) {
-      context.read<BeerListBloc>().add(BeerListFetched());
-    }
     return const BeerView();
   }
 }

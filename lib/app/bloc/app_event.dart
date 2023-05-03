@@ -9,8 +9,7 @@ class AppLogoutRequested extends AppEvent {
 }
 
 class _AppUserChanged extends AppEvent {
-  const _AppUserChanged(this.user, this.profile);
+  const _AppUserChanged(this.user);
 
   final User user;
-  final Profile profile;
 }
