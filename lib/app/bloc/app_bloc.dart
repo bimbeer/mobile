@@ -25,15 +25,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppLogoutRequested>(_onLogoutRequested);
 
     _userSubscription = _authenticationRepository.user.listen((user) {
-      _profileSubscription =
-          _profileRepository.getProfile(user.id).listen((profile) {
+      _profileSubscription = _profileRepository.profileStream(user.id).listen((profile) {
         add(_AppUserChanged(user, profile));
         _profileBloc.add(ProfileFetched(profile: profile));
       });
     });
 
     _authenticationRepository.user.first
-        .then((user) => {_profileRepository.getProfile(user.id).first});
+        .then((user) => {_profileRepository.get(user.id)});
   }
 
   final AuthenticaionRepository _authenticationRepository;

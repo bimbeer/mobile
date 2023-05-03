@@ -1,16 +1,17 @@
+import 'package:bimbeer/features/profile/models/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/presentation/widgets/pop_page_button.dart';
-import '../bloc/beer_bloc.dart';
+import '../bloc/beer_list_bloc.dart';
 
 class BeerPage extends StatelessWidget {
   const BeerPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    if (context.read<BeerBloc>().state.status == BeerStatus.initial) {
-      context.read<BeerBloc>().add(BeersFetched());
+    if (context.read<BeerListBloc>().state.status == BeerListStatus.initial) {
+      context.read<BeerListBloc>().add(BeerListFetched());
     }
     return const BeerView();
   }
@@ -45,22 +46,34 @@ class BeerView extends StatelessWidget {
                 ),
               ],
             ),
-            BlocBuilder<BeerBloc, BeerState>(
-              buildWhen: (prev, current) => prev.status != current.status,
-              builder: (context, state) {
+            BlocBuilder<BeerListBloc, BeerListState>(builder: (context, state) {
+              if (state.status == BeerListStatus.loadingFailed) {
+                return Center(
+                  child: Text(
+                    'Could not load beer list. Try again later',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                );
+              } else {
                 return Expanded(
                   child: GridView.builder(
+                    itemCount: state.beers.length,
                     itemBuilder: (BuildContext context, int index) {
-                      if (state.status == BeerStatus.loading) {
-                        const Center(
+                      if (state.status == BeerListStatus.loading) {
+                        return const Center(
                           child: CircularProgressIndicator(),
                         );
-                      } else if (state.status == BeerStatus.loaded &&
-                          state.beerURLs.isNotEmpty) {
-                        return BeerTile(imageURL: state.beerURLs[index]);
+                      } else if (state.status == BeerListStatus.updateFailed) {
+                        ScaffoldMessenger.of(context)
+                          ..hideCurrentSnackBar()
+                          ..showSnackBar(const SnackBar(
+                              duration: Duration(seconds: 2),
+                              content:
+                                  Text('Could not update selected beer.')));
+                      } else {
+                        return BeerTile(beer: state.beers[index]);
                       }
                     },
-                    itemCount: state.beerURLs.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
@@ -71,8 +84,8 @@ class BeerView extends StatelessWidget {
                     shrinkWrap: true,
                   ),
                 );
-              },
-            ),
+              }
+            })
           ],
         ),
       ),
@@ -82,28 +95,27 @@ class BeerView extends StatelessWidget {
 
 class BeerTile extends StatelessWidget {
   const BeerTile({
-    required this.imageURL,
+    required this.beer,
     super.key,
   });
 
-  final String imageURL;
+  final Beer beer;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          context.read<BeerBloc>().add(SelectedBeer(imageURL));
+          context.read<BeerListBloc>().add(BeerToggled(beer));
         },
-        child: BlocBuilder<BeerBloc, BeerState>(
+        child: BlocBuilder<BeerListBloc, BeerListState>(
           buildWhen: (previous, current) {
-            return previous.status != current.status;
+            return (previous.selectedBeers.contains(beer) &&
+                    !current.selectedBeers.contains(beer)) ||
+                (!previous.selectedBeers.contains(beer) &&
+                    current.selectedBeers.contains(beer));
           },
           builder: (context, state) {
-            bool selected = false;
-            if (state.status == BeerStatus.selectSuccess &&
-                state.selected == imageURL) {
-              selected = true;
-            }
+            bool selected = state.selectedBeers.contains(beer);
 
             return Container(
               decoration: BoxDecoration(
@@ -115,7 +127,7 @@ class BeerTile extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: GridTile(
-                  child: Image.network(imageURL),
+                  child: Image.network(beer.link),
                 ),
               ),
             );

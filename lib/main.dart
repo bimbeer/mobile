@@ -22,7 +22,7 @@ void main() async {
   final storageRepository = StorageRepository();
 
   final user = await authenticationRepository.user.first;
-  profileRepository.getProfile(user.id).first;
+  profileRepository.get(user.id);
 
   runApp(App(
     authenticationRepository: authenticationRepository,

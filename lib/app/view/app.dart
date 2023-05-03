@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/router/app_router.dart';
 import '../../features/authentication/data/repositories/authentication_repository.dart';
-import '../../features/beer/bloc/beer_bloc.dart';
+import '../../features/beer/bloc/beer_list_bloc.dart';
 import '../../features/navigation/cubit/navigation_cubit.dart';
 import '../../features/profile/bloc/personal_info_bloc.dart';
 import '../../features/profile/bloc/profile_bloc.dart';
@@ -17,19 +17,20 @@ class App extends StatelessWidget {
   App(
       {super.key,
       required AuthenticaionRepository authenticationRepository,
-      required ProfileRepository profileRepository, 
+      required ProfileRepository profileRepository,
       required StorageRepository storageRepository})
       : _authenticationRepository = authenticationRepository,
-        _profileRepository = profileRepository, 
+        _profileRepository = profileRepository,
         _storageRepository = storageRepository;
 
   final AuthenticaionRepository _authenticationRepository;
   final ProfileRepository _profileRepository;
   final StorageRepository _storageRepository;
 
-  late final ProfileBloc _profileBloc = ProfileBloc(profileRepository: _profileRepository);
+  late final ProfileBloc _profileBloc =
+      ProfileBloc(profileRepository: _profileRepository);
   late final PersonalInfoBloc _personalInfoBloc =
-     PersonalInfoBloc(profileBloc: _profileBloc);
+      PersonalInfoBloc(profileBloc: _profileBloc);
   late final AppBloc _appBloc = AppBloc(
     authenticationRepository: _authenticationRepository,
     profileRepository: _profileRepository,
@@ -53,7 +54,10 @@ class App extends StatelessWidget {
             create: (_) => NavigationCubit(),
           ),
           BlocProvider(
-            create: (_) => BeerBloc(storageRepository: _storageRepository, profileBloc: _profileBloc, appState: _appBloc.state),
+            create: (_) => BeerListBloc(
+                storageRepository: _storageRepository,
+                profileRepository: _profileRepository,
+                authenticationRepository: _authenticationRepository),
           ),
         ],
         child: AppView(appRouter: AppRouter()),

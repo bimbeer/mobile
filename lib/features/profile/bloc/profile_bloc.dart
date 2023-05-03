@@ -22,7 +22,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   void _onProfileModified(ProfileModified event, Emitter<ProfileState> emit) {
-    _profileRepository.editProfile(id: event.userId, profile: event.profile);
+    _profileRepository.edit(id: event.userId, profile: event.profile);
     emit(ProfileState.modified(event.profile));
   }
 }
