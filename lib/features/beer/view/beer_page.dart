@@ -2,6 +2,7 @@ import 'package:bimbeer/features/profile/models/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/presentation/widgets/edit_screen_title.dart';
 import '../../../core/presentation/widgets/pop_page_button.dart';
 import '../bloc/beer_list_bloc.dart';
 
@@ -23,26 +24,7 @@ class BeerView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
-                  child: Text(
-                    'Pick your favorite beers',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.topRight,
-                    child: const Padding(
-                      padding: EdgeInsets.fromLTRB(0, 20, 20, 0),
-                      child: PopPageButton(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            const EditScreenTitle(pageTitle: 'Pick your favorite beers',),
             BlocBuilder<BeerListBloc, BeerListState>(builder: (context, state) {
               if (state.status == BeerListStatus.loadingFailed) {
                 return Center(
