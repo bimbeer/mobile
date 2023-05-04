@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
+import '../../../core/presentation/widgets/edit_screen_title.dart';
 import '../bloc/personal_info_bloc.dart';
 import '../bloc/profile_bloc.dart';
 import 'personal_info_form.dart';
@@ -49,14 +50,14 @@ class PersonalInfoView extends StatelessWidget {
       child: Scaffold(
         body: SafeArea(
             child: SingleChildScrollView(
-          child: Column(children: [
-            Container(
-                alignment: Alignment.topRight,
-                child: const Padding(
-                  padding: EdgeInsets.fromLTRB(0, 20, 20, 0),
-                  child: PopPageButton(),
-                )),
-            const PersonalInfoForm(),
+          child: Column(children: const [
+            EditScreenTitle(
+              pageTitle: 'Edit personal info',
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            PersonalInfoForm(),
           ]),
         )),
       ),
