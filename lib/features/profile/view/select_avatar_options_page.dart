@@ -68,7 +68,6 @@ class SelectAvatarOptionsView extends StatelessWidget {
         ],
       ),
     );
-    ;
   }
 }
 

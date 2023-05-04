@@ -1,11 +1,6 @@
-import 'package:bimbeer/core/presentation/asset_path.dart';
-import 'package:bimbeer/features/authentication/data/repositories/authentication_repository.dart';
-import 'package:bimbeer/features/profile/data/repositories/storage_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/avatar_bloc.dart';
-import '../../bloc/profile_bloc.dart';
-import '../../services/image_service.dart';
 import '../select_avatar_options_page.dart';
 
 class Avatar extends StatelessWidget {
@@ -13,13 +8,7 @@ class Avatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AvatarBloc(
-          storageRepository: context.read<StorageRepository>(),
-          authenticaionRepository: context.read<AuthenticaionRepository>(),
-          profileBloc: context.read<ProfileBloc>()),
-      child: const AvatarView(),
-    );
+    return const AvatarView();
   }
 }
 
@@ -30,47 +19,40 @@ class AvatarView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<AvatarBloc, AvatarState>(
       listener: (context, state) {
-        if (state is AvatarUpdated) {
+        if (state.status == AvatarStatus.updated) {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
                 const SnackBar(content: Text('Image updated succesfully')));
-        } else if (state is AvatarUpdateFailed) {
+        } else if (state.status == AvatarStatus.updateFailed) {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(
-                SnackBar(content: Text(state.message)));
+            ..showSnackBar(SnackBar(content: Text(state.errorMessage ?? '')));
         }
       },
-      child: BlocProvider.value(
-        value: BlocProvider.of<AvatarBloc>(context),
-        child: GestureDetector(
-          onTap: () {
-            _showSelectPhotoOptions(context);
-          },
-          child: BlocBuilder<ProfileBloc, ProfileState>(
-            builder: (context, state) {
-              return FutureBuilder<bool>(
-                future: validateImage(state.profile.avatar ?? ''),
-                builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                  if (snapshot.hasData && snapshot.data!) {
-                    return CircleAvatar(
-                      radius: 80,
-                      backgroundImage: NetworkImage(state.profile.avatar!),
-                    );
-                  } else {
-                    return const CircleAvatar(
-                      radius: 80,
-                      child:
-                          Icon(Icons.person, size: 80,),
-                    );
-                  }
-                },
+      child: GestureDetector(
+        onTap: () {
+          _showSelectPhotoOptions(context);
+        },
+        child: BlocBuilder<AvatarBloc, AvatarState>(
+          builder: (context, state) {
+            if (state.avatar != null) {
+              return CircleAvatar(
+                radius: 80,
+                backgroundImage: NetworkImage(state.avatar!),
               );
-            },
-          ),
+            } else {
+              return const CircleAvatar(
+                radius: 80,
+                child: Icon(
+                  Icons.person,
+                  size: 80,
+                ),
+              );
+            }
+          },
         ),
       ),
     );

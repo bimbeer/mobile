@@ -6,6 +6,7 @@ import '../../core/router/app_router.dart';
 import '../../features/authentication/data/repositories/authentication_repository.dart';
 import '../../features/beer/bloc/beer_list_bloc.dart';
 import '../../features/navigation/cubit/navigation_cubit.dart';
+import '../../features/profile/bloc/avatar_bloc.dart';
 import '../../features/profile/bloc/personal_info_bloc.dart';
 import '../../features/profile/bloc/profile_bloc.dart';
 import '../../features/profile/data/repositories/profile_repository.dart';
@@ -53,6 +54,11 @@ class _AppState extends State<App> {
 
   late final _navigationCubit = NavigationCubit();
 
+  late final _avatarBloc = AvatarBloc(
+      storageRepository: widget._storageRepository,
+      authenticaionRepository: widget._authenticationRepository,
+      profileRepository: widget._profileRepository);
+
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
@@ -68,6 +74,7 @@ class _AppState extends State<App> {
           BlocProvider.value(value: _appBloc),
           BlocProvider.value(value: _navigationCubit),
           BlocProvider.value(value: _beerBloc),
+          BlocProvider.value(value: _avatarBloc),
         ],
         child: AppView(appRouter: AppRouter()),
       ),
@@ -81,6 +88,7 @@ class _AppState extends State<App> {
     _personalInfoBloc.close();
     _beerBloc.close();
     _navigationCubit.close();
+    _avatarBloc.close();
     super.dispose();
   }
 }

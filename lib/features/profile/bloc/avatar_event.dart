@@ -12,3 +12,9 @@ class AvatarChangeRequested extends AvatarEvent {
 
   final ImageSource imageSource;
 }
+
+class AvatarLoaded extends AvatarEvent {
+  const AvatarLoaded(this.avatar);
+
+  final String? avatar;
+}
