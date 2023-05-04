@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:bimbeer/features/profile/bloc/profile_bloc.dart';
+import 'package:bimbeer/features/profile/models/profile.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
@@ -10,8 +12,6 @@ import '../models/form_inputs/first_name.dart';
 import '../models/form_inputs/interest.dart';
 import '../models/form_inputs/last_name.dart';
 import '../models/form_inputs/username.dart';
-import '../models/profile.dart';
-import 'profile_bloc.dart';
 
 part 'personal_info_event.dart';
 part 'personal_info_state.dart';

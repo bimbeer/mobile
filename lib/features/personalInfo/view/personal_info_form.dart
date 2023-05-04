@@ -1,10 +1,10 @@
+import 'package:bimbeer/features/profile/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 import '../../../app/bloc/app_bloc.dart';
 import '../bloc/personal_info_bloc.dart';
-import '../bloc/profile_bloc.dart';
 
 class PersonalInfoForm extends StatelessWidget {
   const PersonalInfoForm({super.key});

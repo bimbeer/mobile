@@ -1,11 +1,10 @@
-import 'package:bimbeer/core/presentation/widgets/pop_page_button.dart';
+import 'package:bimbeer/features/profile/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
 import '../../../core/presentation/widgets/edit_screen_title.dart';
 import '../bloc/personal_info_bloc.dart';
-import '../bloc/profile_bloc.dart';
 import 'personal_info_form.dart';
 
 class PersonalInfoPage extends StatelessWidget {
