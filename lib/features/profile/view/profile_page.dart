@@ -50,7 +50,7 @@ class _ProfileViewState extends State<ProfileView> {
             height: 40,
           ),
           GridView.count(
-            padding: EdgeInsets.symmetric(horizontal: 120),
+            padding: const EdgeInsets.symmetric(horizontal: 120),
             crossAxisSpacing: 20,
             mainAxisSpacing: 30,
             shrinkWrap: true,
@@ -62,9 +62,7 @@ class _ProfileViewState extends State<ProfileView> {
                 route: AppRoute.editProfile,
               ),
               ButtonTile(
-                  label: 'Distance',
-                  icon: Icons.map,
-                  route: AppRoute.editProfile),
+                  label: 'Distance', icon: Icons.map, route: AppRoute.location),
               ButtonTile(
                 label: 'Settings',
                 icon: Icons.settings,

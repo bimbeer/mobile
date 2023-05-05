@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/router/app_router.dart';
 import '../../features/authentication/data/repositories/authentication_repository.dart';
 import '../../features/beer/bloc/beer_list_bloc.dart';
+import '../../features/location/bloc/location_bloc.dart';
 import '../../features/navigation/cubit/navigation_cubit.dart';
 import '../../features/personalInfo/bloc/personal_info_bloc.dart';
 import '../../features/profile/bloc/avatar_bloc.dart';
@@ -59,6 +60,11 @@ class _AppState extends State<App> {
       authenticaionRepository: widget._authenticationRepository,
       profileRepository: widget._profileRepository);
 
+  late final _locationBloc = LocationBloc(
+    authenticationRepository: widget._authenticationRepository,
+    profileRepository: widget._profileRepository,
+  );
+
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
@@ -75,6 +81,7 @@ class _AppState extends State<App> {
           BlocProvider.value(value: _navigationCubit),
           BlocProvider.value(value: _beerBloc),
           BlocProvider.value(value: _avatarBloc),
+          BlocProvider.value(value: _locationBloc),
         ],
         child: AppView(appRouter: AppRouter()),
       ),
@@ -89,6 +96,7 @@ class _AppState extends State<App> {
     _beerBloc.close();
     _navigationCubit.close();
     _avatarBloc.close();
+    _locationBloc.close();
     super.dispose();
   }
 }
