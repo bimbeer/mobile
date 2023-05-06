@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
 
 import '../bloc/location_bloc.dart';
 
 const int rangeChangeDebonceMs = 300;
 const int locationInputChangeDebonceMs = 300;
 
-class LocationForm extends StatelessWidget {
+class LocationForm extends StatefulWidget {
   const LocationForm({super.key});
+
+  @override
+  State<LocationForm> createState() => _LocationFormState();
+}
+
+class _LocationFormState extends State<LocationForm> {
+  late final TextEditingController _locationInputController;
+
+  @override
+  void initState() {
+    _locationInputController = TextEditingController();
+    context.read<LocationBloc>().add(LocationInitialized());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +32,9 @@ class LocationForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const _LocationInputLabel(),
-        _LocationInput(),
+        _LocationInput(_locationInputController),
         if (fetchedCities != null && fetchedCities.isNotEmpty)
-          const _SearchResults(),
+          _SearchResults(_locationInputController),
         const SizedBox(
           height: 20,
         ),
@@ -31,6 +46,12 @@ class LocationForm extends StatelessWidget {
         const Center(child: _SaveLocationButton()),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _locationInputController.clear();
+    super.dispose();
   }
 }
 
@@ -49,12 +70,18 @@ class _LocationInputLabel extends StatelessWidget {
 }
 
 class _LocationInput extends StatelessWidget {
+  const _LocationInput(TextEditingController locationInputController)
+      : _locationInputController = locationInputController;
+
+  final TextEditingController _locationInputController;
+
   @override
   Widget build(BuildContext context) {
     final location = context.watch<LocationBloc>().state.locationInput;
+    _locationInputController.text = location.value;
 
     return TextFormField(
-      initialValue: location.value,
+      controller: _locationInputController,
       key: const Key('editLocationForm_locationInput_textField'),
       onChanged: (value) => {
         Future.delayed(
@@ -73,7 +100,10 @@ class _LocationInput extends StatelessWidget {
 }
 
 class _SearchResults extends StatelessWidget {
-  const _SearchResults();
+  const _SearchResults(TextEditingController locationInputController)
+      : _locationInputController = locationInputController;
+
+  final TextEditingController _locationInputController;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +118,9 @@ class _SearchResults extends StatelessWidget {
             onTap: () {
               context
                   .read<LocationBloc>()
-                  .add(LocationUpdated(fetchedCities![index].address.label));
+                  .add(LocationUpdated(fetchedCities![index]));
+              _locationInputController.text =
+                  fetchedCities[index].address.label;
             },
             title: Text(fetchedCities?[index].address.label ?? ''),
           );
@@ -147,19 +179,23 @@ class _SaveLocationButton extends StatelessWidget {
     );
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: ElevatedButton(
-        key: const Key('editLocationForm_submitButton'),
-        onPressed: () =>
-            context.read<LocationBloc>().add(LocationFormSubmitted()),
-        style: buttonStyle,
-        child: const Center(
-          heightFactor: 1.5,
-          child: Text(
-            'Save Changes',
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        child: ElevatedButton(
+          key: const Key('editLocationForm_submitButton'),
+          onPressed: () =>
+              context.read<LocationBloc>().add(LocationFormSubmitted()),
+          style: buttonStyle,
+          child: Center(
+            heightFactor: 1.5,
+            child: BlocBuilder<LocationBloc, LocationState>(
+                builder: (context, state) {
+              return state.status == FormzSubmissionStatus.inProgress
+                  ? const CircularProgressIndicator()
+                  : const Text(
+                      'Save Changes',
+                    );
+            }),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

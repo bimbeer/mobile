@@ -4,15 +4,17 @@ abstract class LocationEvent {
   const LocationEvent();
 }
 
+class LocationInitialized extends LocationEvent {}
+
 class LocationLoaded extends LocationEvent {
   const LocationLoaded(this.profile);
   final Profile profile;
 }
 
 class LocationUpdated extends LocationEvent {
-  LocationUpdated(this.location);
+  LocationUpdated(this.city);
 
-  final String location;
+  final GeocodeCity city;
 }
 
 class LocationInputValueChanged extends LocationEvent {

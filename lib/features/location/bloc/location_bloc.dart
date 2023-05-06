@@ -28,6 +28,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
         _locationRepository = locationRepository,
         super(LocationInitial()) {
     _listenToProfile();
+    on<LocationInitialized>(_onLocationInitialized);
     on<LocationLoaded>(_onLocationLoaded);
     on<LocationUpdated>(_onLocationUpdated);
     on<RangeValueChanged>(_onRangeValueChanged);
@@ -46,15 +47,26 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   late final StreamSubscription _profileSubscription;
   Profile _cachedProfile = Profile.empty;
 
+  void _onLocationInitialized(
+      LocationInitialized event, Emitter<LocationState> emit) {
+    final location =
+        LocationInput.dirty(_profileRepository.currentProfile.location!.label);
+    final range = _profileRepository.currentProfile.range;
+    emit(state.copyWith(
+        locationInput: location, range: range, fetchedCities: [], city: null));
+  }
+
   void _onLocationLoaded(LocationLoaded event, Emitter<LocationState> emit) {
     final location = LocationInput.dirty(event.profile.location!.label);
-    emit(state.copyWith(locationInput: location, range: event.profile.range));
+    final range = event.profile.range;
+    emit(state.copyWith(locationInput: location, range: range));
   }
 
   void _onLocationUpdated(LocationUpdated event, Emitter<LocationState> emit) {
-    final location = LocationInput.dirty(event.location);
+    final location = LocationInput.dirty(event.city.address.label);
     emit(state.copyWith(
       locationInput: location,
+      city: event.city,
       fetchedCities: [],
     ));
   }
@@ -95,7 +107,9 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       LocationInputValueChanged event, Emitter<LocationState> emit) async {
     List<GeocodeCity> fetchedCities =
         await _locationRepository.fetchCityData(event.location);
-    emit(state.copyWith(fetchedCities: fetchedCities));
+    emit(state.copyWith(
+        fetchedCities: fetchedCities,
+        locationInput: LocationInput.dirty(event.location)));
   }
 
   void _onRangeValueChanged(
