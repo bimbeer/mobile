@@ -25,6 +25,7 @@ dependencies:
   image_cropper: ^3.0.2
   image_picker: ^0.8.7+4
   numberpicker: ^2.1.2
+  rxdart: ^0.27.7
 
 dev_dependencies:
   flutter_test:

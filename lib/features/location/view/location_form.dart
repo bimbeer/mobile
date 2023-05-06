@@ -17,6 +17,7 @@ class LocationForm extends StatelessWidget {
         ),
         const _SliderTextValue(),
         const _RangeSlider(),
+        const _SearchResults(),
       ],
     );
   }
@@ -29,7 +30,7 @@ class _LocationInput extends StatelessWidget {
       const Padding(
         padding: EdgeInsets.fromLTRB(20, 0, 0, 10),
         child: Text(
-          'ADDRESS',
+          'LOCATION',
         ),
       ),
       BlocBuilder<LocationBloc, LocationState>(
@@ -56,15 +57,37 @@ class _LocationInput extends StatelessWidget {
   }
 }
 
+class _SearchResults extends StatelessWidget {
+  const _SearchResults();
+
+  @override
+  Widget build(BuildContext context) {
+    final fetchedCities = context.watch<LocationBloc>().state.fetchedCities;
+
+    return SizedBox(
+      height: 100,
+      child: ListView.builder(
+        itemCount: fetchedCities?.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            onTap: () {},
+            title: Text(fetchedCities?[index].address.label ?? ''),
+          );
+        },
+      ),
+    );
+  }
+}
+
 class _SliderTextValue extends StatelessWidget {
   const _SliderTextValue();
 
   @override
   Widget build(BuildContext context) {
-    final locationBloc = context.watch<LocationBloc>();
+    final range = context.watch<LocationBloc>().state.range;
 
     return Center(
-      child: Text('${locationBloc.state.range.toInt().toString()} Km',
+      child: Text('${range.toString()} Km',
           style: Theme.of(context).textTheme.bodyMedium),
     );
   }
@@ -75,15 +98,15 @@ class _RangeSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locationBloc = context.watch<LocationBloc>();
+    final range = context.watch<LocationBloc>().state.range;
 
     return Slider(
-        value: locationBloc.state.range.toDouble(),
+        value: range.toDouble(),
         min: LocationState.minRange.toDouble(),
         max: LocationState.maxRange.toDouble(),
         divisions: LocationState.maxRange - LocationState.minRange,
         onChanged: (range) {
-          locationBloc.add(RangeChanged(range.toInt()));
+          context.read<LocationBloc>().add(RangeChanged(range.toInt()));
         });
   }
 }

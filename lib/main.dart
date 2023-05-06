@@ -1,5 +1,6 @@
 import 'package:bimbeer/app_bloc_observer.dart';
 import 'package:bimbeer/features/authentication/data/repositories/authentication_repository.dart';
+import 'package:bimbeer/features/location/data/repositories/location_repository.dart';
 import 'package:bimbeer/features/profile/data/repositories/profile_repository.dart';
 import 'package:bimbeer/features/profile/data/repositories/storage_repository.dart';
 import 'package:bloc/bloc.dart';
@@ -20,6 +21,7 @@ void main() async {
   final authenticationRepository = AuthenticaionRepository();
   final profileRepository = ProfileRepository();
   final storageRepository = StorageRepository();
+  final locationRepository = LocationRepository();
 
   final user = await authenticationRepository.user.first;
   profileRepository.get(user.id);
@@ -28,5 +30,6 @@ void main() async {
     authenticationRepository: authenticationRepository,
     profileRepository: profileRepository,
     storageRepository: storageRepository,
+    locationRepository: locationRepository,
   ));
 }

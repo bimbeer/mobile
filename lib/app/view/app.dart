@@ -1,4 +1,5 @@
 import 'package:bimbeer/core/presentation/theme.dart';
+import 'package:bimbeer/features/location/data/repositories/location_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,14 +21,17 @@ class App extends StatefulWidget {
       {super.key,
       required AuthenticaionRepository authenticationRepository,
       required ProfileRepository profileRepository,
-      required StorageRepository storageRepository})
+      required StorageRepository storageRepository,
+      required LocationRepository locationRepository})
       : _authenticationRepository = authenticationRepository,
         _profileRepository = profileRepository,
-        _storageRepository = storageRepository;
+        _storageRepository = storageRepository,
+        _locationRepository = locationRepository;
 
   final AuthenticaionRepository _authenticationRepository;
   final ProfileRepository _profileRepository;
   final StorageRepository _storageRepository;
+  final LocationRepository _locationRepository;
 
   @override
   State<App> createState() => _AppState();
@@ -63,6 +67,7 @@ class _AppState extends State<App> {
   late final _locationBloc = LocationBloc(
     authenticationRepository: widget._authenticationRepository,
     profileRepository: widget._profileRepository,
+    locationRepository: widget._locationRepository,
   );
 
   @override
