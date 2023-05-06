@@ -3,22 +3,47 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/location_bloc.dart';
 
+const int rangeChangeDebonceMs = 300;
+const int locationInputChangeDebonceMs = 300;
+
 class LocationForm extends StatelessWidget {
   const LocationForm({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final fetchedCities = context.watch<LocationBloc>().state.fetchedCities;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const _LocationInputLabel(),
         _LocationInput(),
+        if (fetchedCities != null && fetchedCities.isNotEmpty)
+          const _SearchResults(),
         const SizedBox(
           height: 20,
         ),
-        const _SliderTextValue(),
+        const _RangeSliderLabel(),
         const _RangeSlider(),
-        const _SearchResults(),
+        const SizedBox(
+          height: 20,
+        ),
+        const Center(child: _SaveLocationButton()),
       ],
+    );
+  }
+}
+
+class _LocationInputLabel extends StatelessWidget {
+  const _LocationInputLabel();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.fromLTRB(20, 0, 0, 10),
+      child: Text(
+        'LOCATION',
+      ),
     );
   }
 }
@@ -26,34 +51,24 @@ class LocationForm extends StatelessWidget {
 class _LocationInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const Padding(
-        padding: EdgeInsets.fromLTRB(20, 0, 0, 10),
-        child: Text(
-          'LOCATION',
-        ),
-      ),
-      BlocBuilder<LocationBloc, LocationState>(
-          buildWhen: (previous, current) => previous.address != current.address,
-          builder: (context, state) {
-            context
-                .read<LocationBloc>()
-                .add(AddressChanged(state.address.value));
+    final location = context.watch<LocationBloc>().state.locationInput;
 
-            return TextFormField(
-              initialValue: state.address.value,
-              key: const Key('editLocationForm_addressInput_textField'),
-              onChanged: (value) =>
-                  {context.read<LocationBloc>().add(AddressChanged(value))},
-              keyboardType: TextInputType.name,
-              decoration: InputDecoration(
-                errorText: state.address.error?.message,
-                contentPadding: const EdgeInsets.only(left: 20),
-                filled: true,
-              ),
-            );
-          })
-    ]);
+    return TextFormField(
+      initialValue: location.value,
+      key: const Key('editLocationForm_locationInput_textField'),
+      onChanged: (value) => {
+        Future.delayed(
+            const Duration(milliseconds: locationInputChangeDebonceMs), () {
+          context.read<LocationBloc>().add(LocationInputValueChanged(value));
+        })
+      },
+      keyboardType: TextInputType.streetAddress,
+      decoration: InputDecoration(
+        errorText: location.error?.message,
+        contentPadding: const EdgeInsets.only(left: 20),
+        filled: true,
+      ),
+    );
   }
 }
 
@@ -70,7 +85,11 @@ class _SearchResults extends StatelessWidget {
         itemCount: fetchedCities?.length,
         itemBuilder: (context, index) {
           return ListTile(
-            onTap: () {},
+            onTap: () {
+              context
+                  .read<LocationBloc>()
+                  .add(LocationUpdated(fetchedCities![index].address.label));
+            },
             title: Text(fetchedCities?[index].address.label ?? ''),
           );
         },
@@ -79,8 +98,8 @@ class _SearchResults extends StatelessWidget {
   }
 }
 
-class _SliderTextValue extends StatelessWidget {
-  const _SliderTextValue();
+class _RangeSliderLabel extends StatelessWidget {
+  const _RangeSliderLabel();
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +125,41 @@ class _RangeSlider extends StatelessWidget {
         max: LocationState.maxRange.toDouble(),
         divisions: LocationState.maxRange - LocationState.minRange,
         onChanged: (range) {
-          context.read<LocationBloc>().add(RangeChanged(range.toInt()));
+          Future.delayed(const Duration(milliseconds: rangeChangeDebonceMs),
+              () {
+            context.read<LocationBloc>().add(RangeValueChanged(range.toInt()));
+          });
         });
+  }
+}
+
+class _SaveLocationButton extends StatelessWidget {
+  const _SaveLocationButton();
+
+  @override
+  Widget build(BuildContext context) {
+    ButtonStyle buttonStyle = ButtonStyle(
+      side: MaterialStateProperty.all(
+          BorderSide(color: Theme.of(context).colorScheme.primary)),
+      shape: MaterialStateProperty.all(RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      )),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      child: ElevatedButton(
+        key: const Key('editLocationForm_submitButton'),
+        onPressed: () =>
+            context.read<LocationBloc>().add(LocationFormSubmitted()),
+        style: buttonStyle,
+        child: const Center(
+          heightFactor: 1.5,
+          child: Text(
+            'Save Changes',
+          ),
+        ),
+      ),
+    );
   }
 }

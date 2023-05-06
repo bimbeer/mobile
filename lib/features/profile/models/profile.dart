@@ -62,7 +62,7 @@ class Profile extends Equatable {
           geohash: data?['location']?['position']?['geohash'] ?? '',
         ),
       ),
-      range: data?['range'] ?? 0,
+      range: data?['range'] ?? 1,
     );
   }
 
