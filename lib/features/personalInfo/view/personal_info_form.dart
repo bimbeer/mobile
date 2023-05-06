@@ -476,16 +476,10 @@ class _SavePersonalInfoButton extends StatelessWidget {
       shape: MaterialStateProperty.all(RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30.0),
       )),
-      backgroundColor: MaterialStateProperty.resolveWith<Color?>((states) {
-        if (states.contains(MaterialState.pressed)) {
-          return Theme.of(context).colorScheme.primary;
-        }
-        return null;
-      }),
     );
 
-    return SizedBox(
-      width: 300,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
       child: BlocBuilder<PersonalInfoBloc, PersonalInfoState>(
         builder: (context, state) {
           return ElevatedButton(
@@ -497,20 +491,11 @@ class _SavePersonalInfoButton extends StatelessWidget {
                   .add(FormSubmitted(userId: userId));
             },
             style: buttonStyle,
-            child: Stack(
-              children: const [
-                Align(
-                  heightFactor: 1.5,
-                  alignment: Alignment.centerLeft,
-                  child: Icon(Icons.save),
-                ),
-                Center(
-                  heightFactor: 1.5,
-                  child: Text(
-                    'Save Changes',
-                  ),
-                ),
-              ],
+            child: const Center(
+              heightFactor: 1.5,
+              child: Text(
+                'Save Changes',
+              ),
             ),
           );
         },
