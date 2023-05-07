@@ -66,7 +66,7 @@ class _ProfileViewState extends State<ProfileView> {
               ButtonTile(
                 label: 'Settings',
                 icon: Icons.settings,
-                route: AppRoute.editProfile,
+                route: AppRoute.settings,
               ),
               ButtonTile(
                   label: 'Beers',

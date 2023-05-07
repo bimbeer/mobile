@@ -114,13 +114,20 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const ProfilePage(),
-      onGenerateRoute: _appRouter.onGenerateRoute,
-      title: 'BimBeer',
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: ThemeMode.dark,
+    return BlocListener<AppBloc, AppState>(
+      listener: (context, state) {
+        if (state.status == AppStatus.unauthenticated) {
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil(AppRoute.onboard, (route) => false);
+        }
+      },
+      child: MaterialApp(
+        onGenerateRoute: _appRouter.onGenerateRoute,
+        title: 'BimBeer',
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: ThemeMode.dark,
+      ),
     );
   }
 }
