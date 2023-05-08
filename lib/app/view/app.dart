@@ -8,12 +8,12 @@ import '../../features/authentication/data/repositories/authentication_repositor
 import '../../features/beer/bloc/beer_list_bloc.dart';
 import '../../features/location/bloc/location_bloc.dart';
 import '../../features/navigation/cubit/navigation_cubit.dart';
+import '../../features/pairs/bloc/pairs_bloc.dart';
 import '../../features/personalInfo/bloc/personal_info_bloc.dart';
 import '../../features/profile/bloc/avatar_bloc.dart';
 import '../../features/profile/bloc/profile_bloc.dart';
 import '../../features/profile/data/repositories/profile_repository.dart';
 import '../../features/profile/data/repositories/storage_repository.dart';
-import '../../features/profile/view/profile_page.dart';
 import '../bloc/app_bloc.dart';
 
 class App extends StatefulWidget {
@@ -70,6 +70,11 @@ class _AppState extends State<App> {
     locationRepository: widget._locationRepository,
   );
 
+  late final _pairsBloc = PairsBloc(
+      profileRepository: widget._profileRepository,
+      authenticationRepository: widget._authenticationRepository)
+    ..add(PairsFetched());
+
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
@@ -87,6 +92,7 @@ class _AppState extends State<App> {
           BlocProvider.value(value: _beerBloc),
           BlocProvider.value(value: _avatarBloc),
           BlocProvider.value(value: _locationBloc),
+          BlocProvider.value(value: _pairsBloc),
         ],
         child: AppView(appRouter: AppRouter()),
       ),
@@ -102,6 +108,7 @@ class _AppState extends State<App> {
     _navigationCubit.close();
     _avatarBloc.close();
     _locationBloc.close();
+    _pairsBloc.close();
     super.dispose();
   }
 }
