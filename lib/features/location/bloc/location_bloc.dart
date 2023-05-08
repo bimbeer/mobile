@@ -73,23 +73,31 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   void _onLocationFormSubmitted(
       LocationFormSubmitted event, Emitter<LocationState> emit) async {
-    if (state.city == null) {
+    late final GeocodeCity city;
+    if (state.locationInput.isNotValid) {
       emit(state.copyWith(status: FormzSubmissionStatus.canceled));
       return;
+    }
+    if (state.city == null) {
+      final cities = await _locationRepository.fetchCityData(state.locationInput.value);
+      city = cities.first;
+    }
+    else {
+      city = state.city!;
     }
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
 
     final profile = _profileRepository.currentProfile;
-    final label = state.city?.address.label;
-    final lat = state.city?.position.lat;
-    final lng = state.city?.position.lng;
+    final label = city.address.label;
+    final lat = city.position.lat;
+    final lng = city.position.lng;
     final range = state.range;
 
     final myGeoHash = MyGeoHash();
-    final geohash = myGeoHash.geoHashForLocation(GeoPoint(lat!, lng!));
+    final geohash = myGeoHash.geoHashForLocation(GeoPoint(lat, lng));
 
     var location = Location(
-        label: label!,
+        label: label,
         position: Position(coordinates: [lat, lng], geohash: geohash));
 
     final updatedProfile = profile.copyWith(location: location, range: range);
