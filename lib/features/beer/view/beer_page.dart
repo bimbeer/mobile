@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/presentation/widgets/edit_screen_title.dart';
-import '../../../core/presentation/widgets/pop_page_button.dart';
 import '../bloc/beer_list_bloc.dart';
 
 class BeerPage extends StatelessWidget {

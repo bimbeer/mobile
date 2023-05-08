@@ -8,6 +8,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../profile/models/profile.dart';
+import '../utils/beer_list_util.dart';
 
 part 'beer_list_event.dart';
 part 'beer_list_state.dart';
@@ -44,7 +45,10 @@ class BeerListBloc extends Bloc<BeerListEvent, BeerListState> {
       emit(state.copyWith(status: BeerListStatus.loading));
       final beerURLs =
           await _storageRepository.getAllFiles(storagePath: 'beers');
-      final beers = beerURLs.map((e) => Beer(link: e, name: '')).toList();
+      final beers = beerURLs
+          .map((e) =>
+              Beer(link: e, name: BeerListUtil.getBeerNameByLink(e) ?? ''))
+          .toList();
 
       final Profile profile = await _profileRepository
           .get(_authenticationRepository.currentUser.id);
