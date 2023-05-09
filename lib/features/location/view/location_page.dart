@@ -25,9 +25,8 @@ class LocationView extends StatelessWidget {
         if (state.status == FormzSubmissionStatus.success) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(const SnackBar(
-                duration: Duration(seconds: 2),
-                content: Text('Discovery settings updated')));
+            ..showSnackBar(
+                const SnackBar(content: Text('Discovery settings updated')));
         }
       },
       child: Scaffold(
