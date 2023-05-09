@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 class Profile extends Equatable {
@@ -34,35 +33,23 @@ class Profile extends Equatable {
 
   static const empty = Profile();
 
-  factory Profile.fromSnapshot(
-      DocumentSnapshot<Map<String, dynamic>> snapshot) {
-    final data = snapshot.data();
+  factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
-      firstName: data?['firstName'] ?? '',
-      lastName: data?['lastName'] ?? '',
-      username: data?['username'] ?? '',
-      description: data?['description'] ?? '',
-      age: data?['age'] ?? 0,
-      avatar: data?['avatar'] ?? '',
-      beers: (data?['beers'] ?? [])
-          .map<Beer>((beerData) => Beer(
-                link: beerData?['link'] ?? '',
-                name: beerData?['name'] ?? '',
-              ))
+      firstName: json['firstName'] ?? '',
+      lastName: json['lastName'] ?? '',
+      username: json['username'] ?? '',
+      description: json['description'] ?? '',
+      age: json['age'] ?? 0,
+      avatar: json['avatar'] ?? '',
+      beers: (json['beers'] ?? [])
+          .map<Beer>((beerData) => Beer.fromJson(beerData))
           .toList(),
-      gender: data?['gender'] ?? '',
-      interest: data?['interest'] ?? '',
-      isGlobal: data?['isGlobal'] ?? false,
-      isLocal: data?['isLocal'] ?? false,
-      location: Location(
-        label: data?['location']?['label'] ?? '',
-        position: Position(
-          coordinates: (data?['location']?['position']?['coordinates'] ?? [])
-              .cast<double>(),
-          geohash: data?['location']?['position']?['geohash'] ?? '',
-        ),
-      ),
-      range: data?['range'] ?? 1,
+      gender: json['gender'] ?? '',
+      interest: json['interest'] ?? '',
+      isGlobal: json['isGlobal'] ?? false,
+      isLocal: json['isLocal'] ?? false,
+      location: Location.fromJson(json['location']),
+      range: json['range'] ?? 1,
     );
   }
 
@@ -150,6 +137,13 @@ class Beer extends Equatable {
     };
   }
 
+  factory Beer.fromJson(Map<String, dynamic> json) {
+    return Beer(
+      link: json['link'] as String,
+      name: json['name'] as String,
+    );
+  }
+
   @override
   List<Object?> get props => [
         link,
@@ -173,6 +167,13 @@ class Location extends Equatable {
     };
   }
 
+  factory Location.fromJson(Map<String, dynamic> json) {
+    return Location(
+      label: json['label'] as String,
+      position: Position.fromJson(json['position'] as Map<String, dynamic>),
+    );
+  }
+
   @override
   List<Object?> get props => [
         label,
@@ -194,6 +195,13 @@ class Position extends Equatable {
       'coordinates': coordinates,
       'geohash': geohash,
     };
+  }
+
+  factory Position.fromJson(Map<String, dynamic> json) {
+    return Position(
+      coordinates: (json['coordinates'] as List<dynamic>).map((e) => e as double).toList(),
+      geohash: json['geohash'] as String,
+    );
   }
 
   @override

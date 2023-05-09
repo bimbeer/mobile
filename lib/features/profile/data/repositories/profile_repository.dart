@@ -20,7 +20,7 @@ class ProfileRepository {
     final docRef = _db.collection('profile').doc(id);
     return docRef
         .snapshots()
-        .map((doc) => Profile.fromSnapshot(doc))
+        .map((doc) => Profile.fromJson(doc.data()!))
         .asBroadcastStream();
   }
 
@@ -29,7 +29,7 @@ class ProfileRepository {
     final snapshot = await docRef.get();
     late Profile profile;
     if (snapshot.exists) {
-      profile = Profile.fromSnapshot(snapshot);
+      profile = Profile.fromJson(snapshot.data()!);
     } else {
       profile = Profile.empty;
     }
@@ -69,8 +69,8 @@ class ProfileRepository {
     for (final querySnapshot in querySnapshots) {
       for (final document in querySnapshot.docs) {
         final potentialMatchId = document.id;
-        final matchingProfile =
-            MatchingProfile(potentialMatchId, Profile.fromSnapshot(document));
+        final matchingProfile = MatchingProfile(
+            potentialMatchId, Profile.fromJson(document.data()));
 
         final currentInteractions = await _db
             .collection('interactions')
