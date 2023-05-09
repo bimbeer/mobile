@@ -21,6 +21,5 @@ class PopPageButton extends StatelessWidget {
         color: Colors.grey,
       ),
     );
-    ;
   }
 }
