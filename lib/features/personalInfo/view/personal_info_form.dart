@@ -307,21 +307,21 @@ class _GenderInput extends StatelessWidget {
     String numberToGender(String value) {
       switch (value) {
         case '0':
-          return 'Male';
+          return 'Man';
         case '1':
-          return 'Female';
+          return 'Woman';
         case '2':
           return 'Other';
         default:
-          return 'Male';
+          return 'Man';
       }
     }
 
     int genderToNumber(String value) {
       switch (value) {
-        case 'Male':
+        case 'Man':
           return 0;
-        case 'Female':
+        case 'Woman':
           return 1;
         case 'Other':
           return 2;

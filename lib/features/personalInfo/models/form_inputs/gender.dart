@@ -8,7 +8,7 @@ enum GenderValidationError {
   const GenderValidationError(this.message);
 }
 
-const List<String> genders = ['Male', 'Female', 'Other'];
+const List<String> genders = ['Man', 'Woman', 'Other'];
 
 class Gender extends FormzInput<String, GenderValidationError> {
   const Gender.pure() : super.pure('');
