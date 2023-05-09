@@ -1,9 +1,11 @@
+import 'package:bimbeer/core/presentation/asset_path.dart';
 import 'package:bimbeer/features/navigation/view/navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 
+import '../../profile/models/profile.dart';
 import '../bloc/pairs_bloc.dart';
 import '../bloc/profile_card_bloc.dart';
 
@@ -24,15 +26,17 @@ class PairsView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
       body: SafeArea(
-          child: Column(
-        children: const [NavBar(), ProfileCards()],
+          child: SingleChildScrollView(
+        child: Column(
+          children: const [NavBar(), PairsViewContent()],
+        ),
       )),
     );
   }
 }
 
-class ProfileCards extends StatelessWidget {
-  const ProfileCards({super.key});
+class PairsViewContent extends StatelessWidget {
+  const PairsViewContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,28 +45,20 @@ class ProfileCards extends StatelessWidget {
     return BlocBuilder<PairsBloc, PairsState>(
       builder: (context, state) {
         if (state is PairsNotEmpty) {
-          final swipeItems = <SwipeItem>[
-            ...state.pairs.map((e) =>
-                SwipeItem(content: e, likeAction: () {}, nopeAction: () {}))
-          ];
+          List<SwipeItem> swipeItems = _getSwipeItems(state);
           matchEngine = MatchEngine(swipeItems: swipeItems);
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: SizedBox(
-              height: 600,
-              child: SwipeCards(
-                  itemBuilder: (context, index) {
-                    return BlocProvider(
-                      create: (context) =>
-                          ProfileCardBloc(profile: state.pairs[index]),
-                      child: const ProfileCard(),
-                    );
-                  },
-                  matchEngine: matchEngine,
-                  onStackFinished: () {
-                    context.read<PairsBloc>().add(PairsFinished());
-                  }),
-            ),
+
+          return Column(
+            children: [
+              ProfileCards(
+                matchEngine: matchEngine,
+                pairs: state.pairs,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              SwipeButtons(matchEngine),
+            ],
           );
         } else if (state is PairsLoading) {
           return const Center(child: CircularProgressIndicator());
@@ -76,10 +72,52 @@ class ProfileCards extends StatelessWidget {
       },
     );
   }
+
+  List<SwipeItem> _getSwipeItems(PairsNotEmpty state) {
+    final swipeItems = <SwipeItem>[
+      ...state.pairs.map(
+          (e) => SwipeItem(content: e, likeAction: () {}, nopeAction: () {}))
+    ];
+    return swipeItems;
+  }
+}
+
+class ProfileCards extends StatelessWidget {
+  const ProfileCards({
+    super.key,
+    required this.matchEngine,
+    required this.pairs,
+  });
+
+  final MatchEngine matchEngine;
+  final List<Profile> pairs;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      child: SizedBox(
+        height: 600,
+        child: SwipeCards(
+            itemBuilder: (context, index) {
+              return BlocProvider(
+                create: (context) => ProfileCardBloc(profile: pairs[index]),
+                child: ProfileCard(matchEngine),
+              );
+            },
+            matchEngine: matchEngine,
+            onStackFinished: () {
+              context.read<PairsBloc>().add(PairsFinished());
+            }),
+      ),
+    );
+  }
 }
 
 class ProfileCard extends StatelessWidget {
-  const ProfileCard({super.key});
+  const ProfileCard(this.matchEngine, {super.key});
+
+  final MatchEngine matchEngine;
 
   @override
   Widget build(BuildContext context) {
@@ -191,6 +229,52 @@ class ProfileCard extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class SwipeButtons extends StatelessWidget {
+  const SwipeButtons(this.matchEngine, {super.key});
+
+  final MatchEngine matchEngine;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        OutlinedButton(
+          onPressed: () {},
+          style: OutlinedButton.styleFrom(
+            fixedSize: const Size(70, 70),
+            shape: const CircleBorder(),
+            padding: const EdgeInsets.all(16),
+            side: BorderSide(color: Colors.red[400]!),
+            foregroundColor: Colors.red[400],
+          ),
+          child: Icon(
+            Icons.close,
+            size: 40,
+            color: Colors.red[300],
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        OutlinedButton(
+          onPressed: () {},
+          style: OutlinedButton.styleFrom(
+            fixedSize: const Size(70, 70),
+            shape: const CircleBorder(),
+            padding: const EdgeInsets.all(16),
+            side: const BorderSide(color: Colors.green),
+            foregroundColor: Colors.green,
+          ),
+          child: Image.asset(
+            AssetPath.greenBeerMug,
+          ),
+        )
+      ],
     );
   }
 }
