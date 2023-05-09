@@ -4,6 +4,7 @@ import 'package:bimbeer/features/profile/models/profile_match.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' hide GeoPoint;
 import 'package:flutter_geo_hash/geohash.dart';
 
+import '../../models/matching_profile.dart';
 import '../../utils/profile_matching_utils.dart';
 
 class ProfileRepository {
@@ -42,7 +43,7 @@ class ProfileRepository {
     _updateCache(profile);
   }
 
-  Future<List<Profile>> getMatchingProfiles(String id) async {
+  Future<List<MatchingProfile>> getMatchingProfiles(String id) async {
     final profile = _cachedProfile ?? await get(id);
     final latitude = profile.location?.position.coordinates[0];
     final longtitude = profile.location?.position.coordinates[1];
@@ -63,16 +64,31 @@ class ProfileRepository {
     });
 
     final querySnapshots = await Future.wait(queries);
-    final matchedProfiles = <Profile>[];
+    final matchedProfiles = <MatchingProfile>[];
 
     for (final querySnapshot in querySnapshots) {
       for (final document in querySnapshot.docs) {
         final potentialMatchId = document.id;
-        final matchedProfile = Profile.fromSnapshot(document);
+        final matchingProfile =
+            MatchingProfile(potentialMatchId, Profile.fromSnapshot(document));
 
-        if (potentialMatchId != id && !matchedProfiles.contains(matchedProfile)) {
-          if (_isMatch(profile, matchedProfile)) {
-            matchedProfiles.add(matchedProfile);
+        final currentInteractions = await _db
+            .collection('interactions')
+            .where('sender', isEqualTo: id)
+            .where('recipient', isEqualTo: potentialMatchId)
+            .get();
+        if (currentInteractions.docs.isNotEmpty) return matchedProfiles;
+
+        final currentReverseInteractions = await _db
+            .collection('interactions')
+            .where('recipient', isEqualTo: id)
+            .where('sender', isEqualTo: potentialMatchId)
+            .get();
+        if (currentReverseInteractions.docs.isNotEmpty) return matchedProfiles;
+
+        if (potentialMatchId != id) {
+          if (_isMatch(profile, matchingProfile.profile)) {
+            matchedProfiles.add(MatchingProfile(potentialMatchId, profile));
           }
         }
       }

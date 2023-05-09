@@ -9,6 +9,7 @@ import '../../features/beer/bloc/beer_list_bloc.dart';
 import '../../features/location/bloc/location_bloc.dart';
 import '../../features/navigation/cubit/navigation_cubit.dart';
 import '../../features/pairs/bloc/pairs_bloc.dart';
+import '../../features/pairs/data/repositories/interactions_repository.dart';
 import '../../features/personalInfo/bloc/personal_info_bloc.dart';
 import '../../features/profile/bloc/avatar_bloc.dart';
 import '../../features/profile/bloc/profile_bloc.dart';
@@ -22,16 +23,19 @@ class App extends StatefulWidget {
       required AuthenticaionRepository authenticationRepository,
       required ProfileRepository profileRepository,
       required StorageRepository storageRepository,
-      required LocationRepository locationRepository})
+      required LocationRepository locationRepository,
+      required InteractionsRepository interactionsRepository})
       : _authenticationRepository = authenticationRepository,
         _profileRepository = profileRepository,
         _storageRepository = storageRepository,
-        _locationRepository = locationRepository;
+        _locationRepository = locationRepository,
+        _interactionsRepository = interactionsRepository;
 
   final AuthenticaionRepository _authenticationRepository;
   final ProfileRepository _profileRepository;
   final StorageRepository _storageRepository;
   final LocationRepository _locationRepository;
+  final InteractionsRepository _interactionsRepository;
 
   @override
   State<App> createState() => _AppState();
@@ -71,9 +75,10 @@ class _AppState extends State<App> {
   );
 
   late final _pairsBloc = PairsBloc(
-      profileRepository: widget._profileRepository,
-      authenticationRepository: widget._authenticationRepository)
-    ..add(PairsFetched());
+    profileRepository: widget._profileRepository,
+    authenticationRepository: widget._authenticationRepository,
+    interactionsRepository: widget._interactionsRepository,
+  )..add(PairsFetched());
 
   @override
   Widget build(BuildContext context) {

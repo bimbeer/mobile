@@ -2,17 +2,17 @@ part of 'profile_card_bloc.dart';
 
 class ProfileCardState extends Equatable {
   const ProfileCardState(
-      {required this.profile, required this.currentBeerIndex});
+      {required this.matchingProfile, required this.currentBeerIndex});
 
-  ProfileCardState copyWith({Profile? profile, int? currentBeerIndex}) {
+  ProfileCardState copyWith({MatchingProfile? profile, int? currentBeerIndex}) {
     return ProfileCardState(
-        profile: profile ?? this.profile,
+        matchingProfile: profile ?? this.matchingProfile,
         currentBeerIndex: currentBeerIndex ?? this.currentBeerIndex);
   }
 
-  final Profile profile;
+  final MatchingProfile matchingProfile;
   final int currentBeerIndex;
 
   @override
-  List<Object> get props => [profile, currentBeerIndex];
+  List<Object> get props => [matchingProfile, currentBeerIndex];
 }

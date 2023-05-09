@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 
-import '../../profile/models/profile.dart';
+import '../../profile/models/matching_profile.dart';
 import '../bloc/pairs_bloc.dart';
 import '../bloc/profile_card_bloc.dart';
 
@@ -28,6 +28,7 @@ class PairsView extends StatelessWidget {
       body: SafeArea(
           child: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: const [NavBar(), PairsViewContent()],
         ),
       )),
@@ -45,14 +46,23 @@ class PairsViewContent extends StatelessWidget {
     return BlocBuilder<PairsBloc, PairsState>(
       builder: (context, state) {
         if (state is PairsNotEmpty) {
-          List<SwipeItem> swipeItems = _getSwipeItems(state);
+          final swipeItems = <SwipeItem>[
+            ...state.matchingProfiles.map((e) => SwipeItem(
+                content: e,
+                likeAction: () {
+                  context.read<PairsBloc>().add(PairLiked(e));
+                },
+                nopeAction: () {
+                  context.read<PairsBloc>().add(PairDisliked(e));
+                }))
+          ];
           matchEngine = MatchEngine(swipeItems: swipeItems);
 
           return Column(
             children: [
               ProfileCards(
                 matchEngine: matchEngine,
-                pairs: state.pairs,
+                pairs: state.matchingProfiles,
               ),
               const SizedBox(
                 height: 20,
@@ -61,24 +71,47 @@ class PairsViewContent extends StatelessWidget {
             ],
           );
         } else if (state is PairsLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return Column(
+            children: const [
+              SizedBox(
+                height: 300,
+              ),
+              CircularProgressIndicator(),
+            ],
+          );
         } else {
-          return Center(
-              child: Text(
-            'No matches found',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ));
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(
+                height: 300,
+              ),
+              Text(
+                'No matches found',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              OutlinedButton(
+                onPressed: () {
+                  context.read<PairsBloc>().add(PairsFetched());
+                },
+                style: OutlinedButton.styleFrom(
+                  fixedSize: const Size(70, 70),
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(16),
+                ),
+                child: const Icon(
+                  Icons.refresh,
+                  size: 40,
+                ),
+              ),
+            ],
+          );
         }
       },
     );
-  }
-
-  List<SwipeItem> _getSwipeItems(PairsNotEmpty state) {
-    final swipeItems = <SwipeItem>[
-      ...state.pairs.map(
-          (e) => SwipeItem(content: e, likeAction: () {}, nopeAction: () {}))
-    ];
-    return swipeItems;
   }
 }
 
@@ -90,7 +123,7 @@ class ProfileCards extends StatelessWidget {
   });
 
   final MatchEngine matchEngine;
-  final List<Profile> pairs;
+  final List<MatchingProfile> pairs;
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +179,8 @@ class ProfileCard extends StatelessWidget {
                       },
                       blendMode: BlendMode.dstIn,
                       child: Image.network(
-                        state.profile.beers![state.currentBeerIndex].link,
+                        state.matchingProfile.profile
+                            .beers![state.currentBeerIndex].link,
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -156,7 +190,7 @@ class ProfileCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       StepProgressIndicator(
-                        totalSteps: state.profile.beers!.length,
+                        totalSteps: state.matchingProfile.profile.beers!.length,
                         currentStep: state.currentBeerIndex + 1,
                         selectedColor: Theme.of(context).colorScheme.primary,
                         unselectedColor: Colors.grey,
@@ -208,7 +242,7 @@ class ProfileCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '${state.profile.username ?? 'Empty'}, ${state.profile.age}',
+                                '${state.matchingProfile.profile.username ?? 'Empty'}, ${state.matchingProfile.profile.age}',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headlineSmall
@@ -218,7 +252,8 @@ class ProfileCard extends StatelessWidget {
                                 height: 6,
                               ),
                               Text(
-                                state.profile.location?.label ?? 'Empty',
+                                state.matchingProfile.profile.location?.label ??
+                                    'Empty',
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ],
@@ -244,7 +279,9 @@ class SwipeButtons extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         OutlinedButton(
-          onPressed: () {},
+          onPressed: () {
+            matchEngine.currentItem?.nope();
+          },
           style: OutlinedButton.styleFrom(
             fixedSize: const Size(70, 70),
             shape: const CircleBorder(),
@@ -262,7 +299,9 @@ class SwipeButtons extends StatelessWidget {
           width: 20,
         ),
         OutlinedButton(
-          onPressed: () {},
+          onPressed: () {
+            matchEngine.currentItem?.like();
+          },
           style: OutlinedButton.styleFrom(
             fixedSize: const Size(70, 70),
             shape: const CircleBorder(),

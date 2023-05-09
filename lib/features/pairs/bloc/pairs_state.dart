@@ -12,8 +12,7 @@ class PairsEmpty extends PairsState {}
 class PairsLoading extends PairsState {}
 
 class PairsNotEmpty extends PairsState {
-  final List<Profile> pairs;
+  final List<MatchingProfile> matchingProfiles;
 
-  const PairsNotEmpty(this.pairs);
+  const PairsNotEmpty(this.matchingProfiles);
 }
-
