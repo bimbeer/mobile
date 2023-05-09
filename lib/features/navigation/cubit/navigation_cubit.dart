@@ -6,7 +6,7 @@ import '../../../core/router/app_router.dart';
 part 'navigation_state.dart';
 
 class NavigationCubit extends Cubit<NavigationState> {
-  NavigationCubit() : super(NavigationPairs());
+  NavigationCubit() : super(NavigationProfile());
 
   void navigateToChat() {
     emit(NavigationChat());
