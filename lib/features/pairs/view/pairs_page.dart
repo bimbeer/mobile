@@ -14,6 +14,9 @@ class PairsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (context.read<PairsBloc>().state is PairsEmpty) {
+      context.read<PairsBloc>().add(PairsFetched());
+    }
     return const PairsView();
   }
 }
@@ -74,7 +77,7 @@ class PairsViewContent extends StatelessWidget {
           return Column(
             children: const [
               SizedBox(
-                height: 300,
+                height: 200,
               ),
               CircularProgressIndicator(),
             ],
@@ -84,7 +87,7 @@ class PairsViewContent extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(
-                height: 300,
+                height: 200,
               ),
               Text(
                 'No matches found',
