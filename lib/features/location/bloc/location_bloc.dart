@@ -79,10 +79,10 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       return;
     }
     if (state.city == null) {
-      final cities = await _locationRepository.fetchCityData(state.locationInput.value);
+      final cities =
+          await _locationRepository.fetchCityData(state.locationInput.value);
       city = cities.first;
-    }
-    else {
+    } else {
       city = state.city!;
     }
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
@@ -116,13 +116,17 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     List<GeocodeCity> fetchedCities =
         await _locationRepository.fetchCityData(event.location);
     emit(state.copyWith(
+        status: FormzSubmissionStatus.initial,
         fetchedCities: fetchedCities,
         locationInput: LocationInput.dirty(event.location)));
   }
 
   void _onRangeValueChanged(
       RangeValueChanged event, Emitter<LocationState> emit) {
-    emit(state.copyWith(range: event.range));
+    emit(state.copyWith(
+      range: event.range,
+      status: FormzSubmissionStatus.initial,
+    ));
   }
 
   void _listenToProfile() {
