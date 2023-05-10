@@ -36,6 +36,10 @@ class _ProfileViewState extends State<ProfileView> {
             height: 20,
           ),
           BlocBuilder<ProfileBloc, ProfileState>(
+            buildWhen: (previous, current) {
+              return previous.profile.username != current.profile.username ||
+                  previous.profile.age != current.profile.age;
+            },
             builder: (context, state) {
               String? name = state.profile.username;
               int? age = state.profile.age;
