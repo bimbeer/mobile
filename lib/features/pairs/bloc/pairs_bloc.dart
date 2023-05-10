@@ -33,12 +33,20 @@ class PairsBloc extends Bloc<PairsEvent, PairsState> {
   final InteractionsRepository _interactionsRepository;
 
   void _onPairsFetched(PairsFetched event, Emitter<PairsState> emit) async {
+    if (_authenticationRepository.currentUser.id == '') {
+      return emit(PairsEmpty());
+    }
+
     emit(PairsLoading());
-    final matches = await _profileRepository
-        .getMatchingProfiles(_authenticationRepository.currentUser.id);
-    if (matches.isNotEmpty) {
-      emit(PairsNotEmpty(matches));
-    } else {
+    try {
+      final matches = await _profileRepository
+          .getMatchingProfiles(_authenticationRepository.currentUser.id);
+      if (matches.isNotEmpty) {
+        emit(PairsNotEmpty(matches));
+      } else {
+        emit(PairsEmpty());
+      }
+    } catch (e) {
       emit(PairsEmpty());
     }
   }
@@ -48,13 +56,19 @@ class PairsBloc extends Bloc<PairsEvent, PairsState> {
   }
 
   void _onPairLiked(PairLiked event, Emitter<PairsState> emit) {
-    final interaction = Interaction(reactionType: like, recipient: event.matchingProfile.id, sender: _authenticationRepository.currentUser.id);
+    final interaction = Interaction(
+        reactionType: like,
+        recipient: event.matchingProfile.id,
+        sender: _authenticationRepository.currentUser.id);
 
     _interactionsRepository.addInteraction(interaction);
   }
 
   void _onPairDisliked(PairDisliked event, Emitter<PairsState> emit) {
-    final interaction = Interaction(reactionType: dislike, recipient: event.matchingProfile.id, sender: _authenticationRepository.currentUser.id);
+    final interaction = Interaction(
+        reactionType: dislike,
+        recipient: event.matchingProfile.id,
+        sender: _authenticationRepository.currentUser.id);
 
     _interactionsRepository.addInteraction(interaction);
   }
