@@ -19,7 +19,8 @@ class SignUpPage extends StatelessWidget {
               SignUpCubit(context.read<AuthenticaionRepository>()),
         ),
         BlocProvider(
-          create: (context) => LoginCubit(context.read<AuthenticaionRepository>()),
+          create: (context) =>
+              LoginCubit(context.read<AuthenticaionRepository>()),
         ),
       ],
       child: const SignUpView(),
@@ -34,7 +35,7 @@ class SignUpView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
-      body: Stack(
+      body: Column(
         children: [
           const Align(
             alignment: Alignment.topRight,
@@ -43,21 +44,23 @@ class SignUpView extends StatelessWidget {
               child: PopPageButton(),
             ),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Text('CREATE ACCOUNT',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(letterSpacing: 3)),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  const SizedBox(width: 300, child: SignUpForm()),
-                ],
+          Flexible(
+            child: Align(
+              alignment: Alignment.center,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Text('CREATE ACCOUNT',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(letterSpacing: 3)),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    const SizedBox(width: 300, child: SignUpForm()),
+                  ],
+                ),
               ),
             ),
           )
