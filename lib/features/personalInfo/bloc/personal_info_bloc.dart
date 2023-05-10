@@ -73,6 +73,7 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
       description: description,
       gender: gender,
       interest: interest,
+      status: FormzSubmissionStatus.initial,
     ));
   }
 
@@ -138,13 +139,19 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
         gender: state.gender.value,
         interest: state.interest.value);
 
-    final userProfile =
-        await _profileRepository.get(_authenticationRepository.currentUser.id);
-    if (userProfile == Profile.empty) {
-      _profileRepository.add(_authenticationRepository.currentUser.id, profile);
-    } else {
-      _profileRepository.edit(
-          id: _authenticationRepository.currentUser.id, profile: profile);
+    try {
+      final userProfile = await _profileRepository
+          .get(_authenticationRepository.currentUser.id);
+      if (userProfile == Profile.empty) {
+        _profileRepository.add(
+            _authenticationRepository.currentUser.id, profile);
+      } else {
+        _profileRepository.edit(
+            id: _authenticationRepository.currentUser.id, profile: profile);
+      }
+      emit(state.copyWith(status: FormzSubmissionStatus.success));
+    } catch (e) {
+      emit(state.copyWith(status: FormzSubmissionStatus.failure));
     }
   }
 
