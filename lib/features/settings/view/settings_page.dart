@@ -1,3 +1,4 @@
+import 'package:bimbeer/core/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,7 +10,14 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SettingsView();
+    return BlocListener<AppBloc, AppState>(
+      listener: (context, state) {
+        if (state.status == AppStatus.unauthenticated) {
+          Navigator.of(context).pushNamedAndRemoveUntil(AppRoute.onboard, (route) => false);
+        }
+      },
+      child: const SettingsView(),
+    );
   }
 }
 
