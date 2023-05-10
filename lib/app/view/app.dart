@@ -51,9 +51,10 @@ class _AppState extends State<App> {
       authenticationRepository: widget._authenticationRepository)
     ..add(ProfileFetched(profile: widget._profileRepository.currentProfile));
 
-  late final PersonalInfoBloc _personalInfoBloc =
-      PersonalInfoBloc(profileBloc: _profileBloc)
-        ..add(PersonalInfoLoaded(widget._profileRepository.currentProfile));
+  late final PersonalInfoBloc _personalInfoBloc = PersonalInfoBloc(
+      authenticationRepository: widget._authenticationRepository,
+      profileRepository: widget._profileRepository)
+    ..add(PersonalInfoLoaded(widget._profileRepository.currentProfile));
 
   late final _beerBloc = BeerListBloc(
       storageRepository: widget._storageRepository,
@@ -126,20 +127,12 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AppBloc, AppState>(
-      listener: (context, state) {
-        if (state.status == AppStatus.unauthenticated) {
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil(AppRoute.onboard, (route) => false);
-        }
-      },
-      child: MaterialApp(
-        onGenerateRoute: _appRouter.onGenerateRoute,
-        title: 'BimBeer',
-        theme: lightTheme,
-        darkTheme: darkTheme,
-        themeMode: ThemeMode.dark,
-      ),
+    return MaterialApp(
+      onGenerateRoute: _appRouter.onGenerateRoute,
+      title: 'BimBeer',
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: ThemeMode.dark,
     );
   }
 }
