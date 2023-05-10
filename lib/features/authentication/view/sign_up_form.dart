@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
+import '../../../core/router/app_router.dart';
 import '../cubit/login_cubit.dart';
 import '../cubit/sign_up_cubit.dart';
 import 'widgets/facebook_login_button.dart';
@@ -20,7 +21,8 @@ class SignUpForm extends StatelessWidget {
         BlocListener<SignUpCubit, SignUpState>(
           listener: (context, state) {
             if (state.status.isSuccess) {
-              Navigator.of(context).popAndPushNamed('/pairs');
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil(AppRoute.profile, (route) => false);
             } else if (state.status.isFailure) {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
@@ -32,7 +34,8 @@ class SignUpForm extends StatelessWidget {
         BlocListener<LoginCubit, LoginState>(
           listener: (context, state) {
             if (state.status.isSuccess) {
-              Navigator.of(context).popAndPushNamed('/pairs');
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil(AppRoute.profile, (route) => false);
             } else if (state.status.isFailure) {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
@@ -135,14 +138,15 @@ class _ConfirmPasswordInput extends StatelessWidget {
       builder: (context, state) {
         return TextField(
             key: const Key('signUpForm_confirmedPasswordInput_textField'),
-            onChanged: (confirmPassword) =>
-                context.read<SignUpCubit>().confirmedPasswordChanged(confirmPassword),
+            onChanged: (confirmPassword) => context
+                .read<SignUpCubit>()
+                .confirmedPasswordChanged(confirmPassword),
             obscureText: true,
             decoration: InputDecoration(
-                errorText:
-                    state.confirmedPassword.isNotValid && state.password.value.isNotEmpty
-                        ? 'Passwords do not match'
-                        : null,
+                errorText: state.confirmedPassword.isNotValid &&
+                        state.password.value.isNotEmpty
+                    ? 'Passwords do not match'
+                    : null,
                 constraints: const BoxConstraints(maxWidth: 300),
                 hintText: 'Confirm Password',
                 contentPadding: const EdgeInsets.only(left: 20),
