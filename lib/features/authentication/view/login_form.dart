@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
+import '../../../core/router/app_router.dart';
 import '../cubit/login_cubit.dart';
 import 'widgets/facebook_login_button.dart';
 import 'widgets/form_buttons_divider.dart';
@@ -15,7 +16,8 @@ class LoginForm extends StatelessWidget {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state.status.isSuccess) {
-          Navigator.of(context).popAndPushNamed('/pairs');
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil(AppRoute.profile, (route) => false);
         } else if (state.status.isFailure) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
