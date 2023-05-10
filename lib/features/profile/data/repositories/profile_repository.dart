@@ -85,18 +85,18 @@ class ProfileRepository {
             .where('sender', isEqualTo: id)
             .where('recipient', isEqualTo: potentialMatchId)
             .get();
-        if (currentInteractions.docs.isNotEmpty) return matchedProfiles;
+        if (currentInteractions.docs.isNotEmpty) continue;
 
         final currentReverseInteractions = await _db
             .collection('interactions')
             .where('recipient', isEqualTo: id)
             .where('sender', isEqualTo: potentialMatchId)
             .get();
-        if (currentReverseInteractions.docs.isNotEmpty) return matchedProfiles;
+        if (currentReverseInteractions.docs.isNotEmpty) continue;
 
         if (potentialMatchId != id) {
           if (_isMatch(profile, matchingProfile.profile)) {
-            matchedProfiles.add(MatchingProfile(potentialMatchId, profile));
+            matchedProfiles.add(matchingProfile);
           }
         }
       }
