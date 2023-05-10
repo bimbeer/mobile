@@ -19,6 +19,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
   flutter_facebook_auth: ^5.0.8
   flutter_geo_hash: ^0.0.4
+  flutter_launcher_icons: ^0.13.1
   formz: ^0.6.0
   google_fonts: ^4.0.3
   google_sign_in: ^6.1.0
@@ -43,3 +44,17 @@ flutter:
     - assets/images/
     - assets/fonts/Pacifico/
     - assets/fonts/Poppins/
+
+flutter_launcher_icons:
+  #  image_path: "assets/images/icon-128x128.png"
+  image_path_android: "assets/images/beer-android-icon.png"
+  android: true # can specify file name here e.g. "ic_launcher"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  remove_alpha_ios: true
+  background_color_android: "#000000"
+  web:
+    generate: false
+  windows:
+    generate: false
+  macos:
+    generate: false
