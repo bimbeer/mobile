@@ -1,4 +1,3 @@
-import 'package:bimbeer/features/profile/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:numberpicker/numberpicker.dart';
@@ -11,10 +10,6 @@ class PersonalInfoForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context
-        .read<PersonalInfoBloc>()
-        .add(PersonalInfoLoaded(context.read<ProfileBloc>().state.profile));
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -69,10 +64,7 @@ class _UsernameInput extends StatelessWidget {
           buildWhen: (previous, current) =>
               previous.username != current.username,
           builder: (context, state) {
-            context
-                .read<PersonalInfoBloc>()
-                .add(UsernameChanged(state.username.value));
-
+            
             return TextFormField(
               initialValue: state.username.value,
               key: const Key('editProfileForm_usernameInput_textField'),
@@ -105,9 +97,6 @@ class _FirstNameInput extends StatelessWidget {
           buildWhen: (previous, current) =>
               previous.firstName != current.firstName,
           builder: (context, state) {
-            context
-                .read<PersonalInfoBloc>()
-                .add(FirstNameChanged(state.firstName.value));
 
             return TextFormField(
               initialValue: state.firstName.value,
@@ -141,9 +130,6 @@ class _SecondNameInput extends StatelessWidget {
           buildWhen: (previous, current) =>
               previous.lastName != current.lastName,
           builder: (context, state) {
-            context
-                .read<PersonalInfoBloc>()
-                .add(LastNameChanged(state.lastName.value));
 
             return TextFormField(
               initialValue: state.lastName.value,
@@ -248,9 +234,6 @@ class _DescriptionInput extends StatelessWidget {
           buildWhen: (previous, current) =>
               previous.description != current.description,
           builder: (context, state) {
-            context
-                .read<PersonalInfoBloc>()
-                .add(DescriptionChanged(state.description.value));
 
             return TextFormField(
               initialValue: state.description.value,
