@@ -38,7 +38,7 @@ class AvatarView extends StatelessWidget {
         },
         child: BlocBuilder<AvatarBloc, AvatarState>(
           builder: (context, state) {
-            if (state.avatar != null) {
+            if (state.avatar != null && state.avatar != '') {
               return CircleAvatar(
                 radius: 80,
                 backgroundImage: NetworkImage(state.avatar!),
