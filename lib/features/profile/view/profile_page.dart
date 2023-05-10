@@ -50,7 +50,7 @@ class _ProfileViewState extends State<ProfileView> {
             height: 40,
           ),
           GridView.count(
-            padding: const EdgeInsets.symmetric(horizontal: 120),
+            padding: const EdgeInsets.symmetric(horizontal: 100),
             crossAxisSpacing: 20,
             mainAxisSpacing: 30,
             shrinkWrap: true,
