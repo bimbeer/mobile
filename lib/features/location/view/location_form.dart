@@ -4,9 +4,6 @@ import 'package:formz/formz.dart';
 
 import '../bloc/location_bloc.dart';
 
-const int rangeChangeDebonceMs = 300;
-const int locationInputChangeDebonceMs = 300;
-
 class LocationForm extends StatefulWidget {
   const LocationForm({super.key});
 
@@ -83,12 +80,8 @@ class _LocationInput extends StatelessWidget {
     return TextFormField(
       controller: _locationInputController,
       key: const Key('editLocationForm_locationInput_textField'),
-      onChanged: (value) => {
-        Future.delayed(
-            const Duration(milliseconds: locationInputChangeDebonceMs), () {
-          context.read<LocationBloc>().add(LocationInputValueChanged(value));
-        })
-      },
+      onChanged: (value) =>
+          {context.read<LocationBloc>().add(LocationInputValueChanged(value))},
       keyboardType: TextInputType.streetAddress,
       decoration: InputDecoration(
         errorText: location.error?.message,
@@ -157,10 +150,7 @@ class _RangeSlider extends StatelessWidget {
         max: LocationState.maxRange.toDouble(),
         divisions: LocationState.maxRange - LocationState.minRange,
         onChanged: (range) {
-          Future.delayed(const Duration(milliseconds: rangeChangeDebonceMs),
-              () {
-            context.read<LocationBloc>().add(RangeValueChanged(range.toInt()));
-          });
+          context.read<LocationBloc>().add(RangeValueChanged(range.toInt()));
         });
   }
 }
