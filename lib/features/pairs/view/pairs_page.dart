@@ -14,9 +14,7 @@ class PairsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (context.read<PairsBloc>().state is PairsEmpty) {
-      context.read<PairsBloc>().add(PairsFetched());
-    }
+    context.read<PairsBloc>().add(PairsFetched());
     return const PairsView();
   }
 }
@@ -133,12 +131,12 @@ class ProfileCards extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30),
       child: SizedBox(
-        height: 600,
+        height: 500,
         child: SwipeCards(
             itemBuilder: (context, index) {
               return BlocProvider(
                 create: (context) => ProfileCardBloc(profile: pairs[index]),
-                child: ProfileCard(matchEngine),
+                child: const ProfileCard(),
               );
             },
             matchEngine: matchEngine,
@@ -151,9 +149,7 @@ class ProfileCards extends StatelessWidget {
 }
 
 class ProfileCard extends StatelessWidget {
-  const ProfileCard(this.matchEngine, {super.key});
-
-  final MatchEngine matchEngine;
+  const ProfileCard({super.key});
 
   @override
   Widget build(BuildContext context) {
