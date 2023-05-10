@@ -39,7 +39,7 @@ class Profile extends Equatable {
       lastName: json['lastName'] ?? '',
       username: json['username'] ?? '',
       description: json['description'] ?? '',
-      age: json['age'] ?? 0,
+      age: json['age'] == null ? null : json['age'] is String ? int.parse(json['age']) : json['age'],
       avatar: json['avatar'] ?? '',
       beers: (json['beers'] ?? [])
           .map<Beer>((beerData) => Beer.fromJson(beerData))
