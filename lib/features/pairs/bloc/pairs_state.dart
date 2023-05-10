@@ -15,4 +15,7 @@ class PairsNotEmpty extends PairsState {
   final List<MatchingProfile> matchingProfiles;
 
   const PairsNotEmpty(this.matchingProfiles);
+
+  @override
+  List<Object> get props => [matchingProfiles];
 }
