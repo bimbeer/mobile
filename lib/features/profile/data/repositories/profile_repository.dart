@@ -17,6 +17,7 @@ class ProfileRepository {
   Profile get currentProfile => _cachedProfile ?? Profile.empty;
 
   Stream<Profile> profileStream(String id) {
+    if (id == '') return const Stream.empty();
     final docRef = _db.collection('profile').doc(id);
     return docRef
         .snapshots()
@@ -25,6 +26,7 @@ class ProfileRepository {
   }
 
   Future<Profile> get(String id) async {
+    if (id == '') return Profile.empty;
     final docRef = _db.collection('profile').doc(id);
     final snapshot = await docRef.get();
     late Profile profile;
@@ -37,6 +39,12 @@ class ProfileRepository {
     return profile;
   }
 
+  Future<void> add(String id, Profile profile) async {
+    final docRef = _db.collection('profile').doc(id);
+    await docRef.set(profile.toMap());
+    _updateCache(profile);
+  }
+
   Future<void> edit({required String id, required Profile profile}) async {
     final docRef = _db.collection('profile').doc(id);
     await docRef.update(profile.toMap());
@@ -45,8 +53,8 @@ class ProfileRepository {
 
   Future<List<MatchingProfile>> getMatchingProfiles(String id) async {
     final profile = _cachedProfile ?? await get(id);
-    final latitude = profile.location?.position.coordinates[0];
-    final longtitude = profile.location?.position.coordinates[1];
+    final latitude = profile.location?.position?.coordinates[0];
+    final longtitude = profile.location?.position?.coordinates[1];
 
     final geoPoint = GeoPoint(latitude!, longtitude!);
     final geohashPrefixes = MyGeoHash()
@@ -98,11 +106,11 @@ class ProfileRepository {
   }
 
   bool _isMatch(Profile profile, Profile other) {
-    final geoPoint = GeoPoint(profile.location!.position.coordinates[0],
-        profile.location!.position.coordinates[1]);
+    final geoPoint = GeoPoint(profile.location!.position!.coordinates[0],
+        profile.location!.position!.coordinates[1]);
 
-    final otherGeoPoint = GeoPoint(other.location!.position.coordinates[0],
-        other.location!.position.coordinates[1]);
+    final otherGeoPoint = GeoPoint(other.location!.position!.coordinates[0],
+        other.location!.position!.coordinates[1]);
 
     final distance = MyGeoHash().distanceBetween(
       otherGeoPoint,
