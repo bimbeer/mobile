@@ -48,7 +48,9 @@ class Profile extends Equatable {
       interest: json['interest'] ?? '',
       isGlobal: json['isGlobal'] ?? false,
       isLocal: json['isLocal'] ?? false,
-      location: Location.fromJson(json['location']),
+      location: json['location'] == null
+          ? Location.empty
+          : Location.fromJson(json['location']),
       range: json['range'] ?? 1,
     );
   }
@@ -139,8 +141,8 @@ class Beer extends Equatable {
 
   factory Beer.fromJson(Map<String, dynamic> json) {
     return Beer(
-      link: json['link'] as String,
-      name: json['name'] as String,
+      link: json['link'] ?? '',
+      name: json['name'] ?? '',
     );
   }
 
@@ -153,24 +155,28 @@ class Beer extends Equatable {
 
 class Location extends Equatable {
   final String label;
-  final Position position;
+  final Position? position;
 
   const Location({
     required this.label,
     required this.position,
   });
 
+  static Location get empty => Location(label: '', position: Position.empty);
+
   Map<String, dynamic> toMap() {
     return {
       'label': label,
-      'position': position.toMap(),
+      'position': position?.toMap(),
     };
   }
 
   factory Location.fromJson(Map<String, dynamic> json) {
     return Location(
-      label: json['label'] as String,
-      position: Position.fromJson(json['position'] as Map<String, dynamic>),
+      label: json['label'] ?? '',
+      position: json['position'] == null
+          ? Position.empty
+          : Position.fromJson(json['position']),
     );
   }
 
@@ -190,17 +196,22 @@ class Position extends Equatable {
     required this.geohash,
   });
 
+  static Position get empty => const Position(coordinates: [], geohash: '');
+
   Map<String, dynamic> toMap() {
     return {
-      'coordinates': coordinates,
+      'coordinates': coordinates.map((e) => e as dynamic),
       'geohash': geohash,
     };
   }
 
   factory Position.fromJson(Map<String, dynamic> json) {
+    final coordinates = json['coordinates'];
     return Position(
-      coordinates: (json['coordinates'] as List<dynamic>).map((e) => e as double).toList(),
-      geohash: json['geohash'] as String,
+      coordinates: coordinates != null
+          ? List<double>.from(coordinates.map((e) => e as double))
+          : <double>[],
+      geohash: json['geohash'] ?? '',
     );
   }
 
