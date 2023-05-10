@@ -1,3 +1,4 @@
+import 'package:bimbeer/core/presentation/splash_page.dart';
 import 'package:bimbeer/features/authentication/view/login_page.dart';
 import 'package:bimbeer/features/authentication/view/sign_up_page.dart';
 import 'package:bimbeer/features/location/view/location_page.dart';
@@ -13,6 +14,8 @@ import '../../features/settings/view/settings_page.dart';
 class AppRouter {
   MaterialPageRoute? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case AppRoute.splash:
+        return MaterialPageRoute(builder: (_) => const SplashPage());
       case AppRoute.onboard:
         return MaterialPageRoute(builder: (_) => const OnboardPage());
       case AppRoute.createAccount:
@@ -32,13 +35,14 @@ class AppRouter {
       case AppRoute.settings:
         return MaterialPageRoute(builder: (_) => const SettingsPage());
       default:
-        return null;
+        return MaterialPageRoute(builder: (_) => const SplashPage());
     }
   }
 }
 
 abstract class AppRoute {
-  static const String profile = '/';
+  static const String splash = '/';
+  static const String profile = '/profile';
   static const String onboard = '/onboard';
   static const String createAccount = '/create-account';
   static const String signIn = '/sign-in';
