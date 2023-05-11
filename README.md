@@ -39,10 +39,16 @@ The following technologies and libraries were used in the development of Bimbeer
 ## Missing functionalities
 
 - real-time chat
-- profile preview
 - authenticate with facebook
 - display pairs
 - delete pairs
+
+## Before running the App locally
+
+After cloning repository, make sure to add .env file inside root folder with following content:
+```sh
+GEOLOCATION_API_KEY=<YOUR_GEOCODE_XYZ_API_KEY>
+```
 
 ## Running the App Locally
 
