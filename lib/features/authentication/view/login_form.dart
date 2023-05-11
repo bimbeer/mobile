@@ -18,9 +18,6 @@ class LoginForm extends StatelessWidget {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state.status.isSuccess) {
-          context
-              .read<ProfileRepository>()
-              .get(context.read<AppBloc>().state.user.id);
           Navigator.of(context)
               .pushNamedAndRemoveUntil(AppRoute.profile, (route) => false);
         } else if (state.status.isFailure) {
