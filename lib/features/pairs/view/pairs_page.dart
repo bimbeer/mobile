@@ -240,19 +240,8 @@ class ProfileCard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => BlocBuilder<
-                                          ProfileCardBloc, ProfileCardState>(
-                                        buildWhen: (previous, current) {
-                                          return previous
-                                                  .matchingProfile.profile !=
-                                              current.matchingProfile.profile;
-                                        },
-                                        builder: (context, state) {
-                                          return ProfilePreviewPage(
-                                            profile:
-                                                state.matchingProfile.profile,
-                                          );
-                                        },
+                                  builder: (context) => ProfilePreviewPage(
+                                        profile: state.matchingProfile.profile,
                                       )),
                             );
                           },
