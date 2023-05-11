@@ -210,7 +210,9 @@ class _Content extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(30))),
           child: Padding(
             padding: const EdgeInsets.all(30),
-            child: Text('${profile.description}'),
+            child: SingleChildScrollView(
+              child: Text('${profile.description}'),
+            ),
           )),
     );
   }
