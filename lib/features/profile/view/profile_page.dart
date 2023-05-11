@@ -2,9 +2,11 @@ import 'package:bimbeer/features/navigation/view/navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../app/bloc/app_bloc.dart';
 import '../../../core/router/app_router.dart';
 import '../../pairs/view/profile_preview_page.dart';
 import '../bloc/profile_bloc.dart';
+import '../data/repositories/profile_repository.dart';
 import 'widgets/avatar.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -12,7 +14,19 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ProfileView();
+    return FutureBuilder(
+        future: context
+            .read<ProfileRepository>()
+            .get(context.read<AppBloc>().state.user.id),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            context
+                .watch<ProfileBloc>()
+                .add(ProfileFetched(profile: snapshot.data!));
+          }
+
+          return const ProfileView();
+        });
   }
 }
 
