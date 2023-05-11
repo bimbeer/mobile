@@ -1,5 +1,6 @@
 import 'package:bimbeer/core/presentation/asset_path.dart';
 import 'package:bimbeer/features/navigation/view/navigation_bar.dart';
+import 'package:bimbeer/features/pairs/view/profile_preview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
@@ -236,6 +237,13 @@ class ProfileCard extends StatelessWidget {
                       GestureDetector(
                           onTap: () {
                             // details button
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfilePreviewPage(
+                                        profile: state.matchingProfile.profile,
+                                      )),
+                            );
                           },
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
