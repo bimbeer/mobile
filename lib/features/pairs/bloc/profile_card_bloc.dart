@@ -16,7 +16,7 @@ class ProfileCardBloc extends Bloc<ProfileCardEvent, ProfileCardState> {
   void _onProfileCardShowNextBeer(
       ProfileCardShowNextBeer event, Emitter<ProfileCardState> emit) {
     final nextBeerIndex =
-        state.currentBeerIndex == state.matchingProfile.profile.beers?.length
+        state.currentBeerIndex == state.matchingProfile.profile.beers!.length - 1
             ? state.currentBeerIndex
             : state.currentBeerIndex + 1;
     emit(state.copyWith(currentBeerIndex: nextBeerIndex));
