@@ -75,44 +75,38 @@ class _Gallery extends StatelessWidget {
   Widget build(BuildContext context) {
     final profileCardBloc = context.watch<ProfileCardBloc>();
 
-    return Container(
-      color: Colors.black,
-      height: 360,
-      child: Stack(
-        children: [
-          const _ExitButton(),
-          if (beerListNotEmpty(context))
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: StepProgressIndicator(
-                totalSteps:
-                    profileCardBloc.state.matchingProfile.profile.beers!.length,
-                currentStep: profileCardBloc.state.currentBeerIndex + 1,
-                selectedColor: Theme.of(context).colorScheme.primary,
-                unselectedColor: Colors.grey,
-                roundedEdges: const Radius.circular(5),
-                padding: 2,
+    return GestureDetector(
+      onPanEnd: (details) {
+        if (beerListNotEmpty(context)) {
+          if (details.velocity.pixelsPerSecond.dx > 0) {
+            profileCardBloc.add(ProfileCardShowPreviousBeer());
+          } else {
+            profileCardBloc.add(ProfileCardShowNextBeer());
+          }
+        }
+      },
+      child: Container(
+        color: Colors.black,
+        height: 360,
+        child: Stack(
+          children: [
+            const _ExitButton(),
+            if (beerListNotEmpty(context))
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: StepProgressIndicator(
+                  totalSteps: profileCardBloc
+                      .state.matchingProfile.profile.beers!.length,
+                  currentStep: profileCardBloc.state.currentBeerIndex + 1,
+                  selectedColor: Theme.of(context).colorScheme.primary,
+                  unselectedColor: Colors.grey,
+                  roundedEdges: const Radius.circular(5),
+                  padding: 2,
+                ),
               ),
-            ),
-          if (beerListNotEmpty(context))
-            SizedBox.expand(
-              child: GestureDetector(
-                  onPanUpdate: (details) {
-                    // Swiping in right direction.
-                    if (details.delta.dx > 0) {
-                      print('right swipe');
-                      profileCardBloc.add(ProfileCardShowPreviousBeer());
-                    }
-
-                    // Swiping in left direction.
-                    if (details.delta.dx < 0) {
-                      print('left swipe');
-                      profileCardBloc.add(ProfileCardShowNextBeer());
-                    }
-                  },
-                  child: const _DisplayedImage()),
-            )
-        ],
+            if (beerListNotEmpty(context)) const _DisplayedImage()
+          ],
+        ),
       ),
     );
   }
@@ -179,7 +173,7 @@ class _Title extends StatelessWidget {
 
     return Text(
       '${profile.firstName} ${profile.lastName}, ${profile.age}',
-      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+      style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
     );
   }
 }
@@ -212,7 +206,7 @@ class _Content extends StatelessWidget {
       child: Container(
           constraints: const BoxConstraints.expand(),
           decoration: const BoxDecoration(
-              color: Colors.black26,
+              color: Color(0xFF1a202c),
               borderRadius: BorderRadius.all(Radius.circular(30))),
           child: Padding(
             padding: const EdgeInsets.all(30),
