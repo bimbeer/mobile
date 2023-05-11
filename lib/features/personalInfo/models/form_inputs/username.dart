@@ -12,8 +12,8 @@ class Username extends FormzInput<String, UsernameError> {
   const Username.pure() : super.pure('');
   const Username.dirty([super.value = '']) : super.dirty();
 
-  static final _usernameRegex =
-      RegExp(r"^[a-zA-Z]{1,50}$");
+  static final _usernameRegex = RegExp(
+      r"[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+(([',. -][a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ ])?[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]*)*$");
 
   @override
   UsernameError? validator(String value) {

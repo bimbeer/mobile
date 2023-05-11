@@ -11,7 +11,7 @@ class Description extends FormzInput<String, DescriptionValidationError> {
   const Description.pure() : super.pure('');
   const Description.dirty([super.value = '']) : super.dirty();
 
-  static final _descriptionRegex = RegExp(r"^[\w\W]{0,500}$");
+  static final _descriptionRegex = RegExp(r"^[\w\W\u0100-\u017F]{0,500}$");
 
   @override
   DescriptionValidationError? validator(String value) {
