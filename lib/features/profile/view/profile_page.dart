@@ -50,8 +50,13 @@ class _ProfileViewState extends State<ProfileView> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ProfilePreviewPage(
-                              profile: state.profile,
+                        builder: (context) =>
+                            BlocBuilder<ProfileBloc, ProfileState>(
+                              builder: (context, state) {
+                                return ProfilePreviewPage(
+                                  profile: state.profile,
+                                );
+                              },
                             )),
                   );
                 },
