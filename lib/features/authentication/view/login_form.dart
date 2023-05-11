@@ -1,7 +1,9 @@
+import 'package:bimbeer/features/profile/data/repositories/profile_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
+import '../../../app/bloc/app_bloc.dart';
 import '../../../core/router/app_router.dart';
 import '../cubit/login_cubit.dart';
 import 'widgets/facebook_login_button.dart';
@@ -16,6 +18,9 @@ class LoginForm extends StatelessWidget {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state.status.isSuccess) {
+          context
+              .read<ProfileRepository>()
+              .get(context.read<AppBloc>().state.user.id);
           Navigator.of(context)
               .pushNamedAndRemoveUntil(AppRoute.profile, (route) => false);
         } else if (state.status.isFailure) {
