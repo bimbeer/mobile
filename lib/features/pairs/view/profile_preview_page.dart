@@ -81,38 +81,58 @@ class _Gallery extends StatelessWidget {
       child: Stack(
         children: [
           const _ExitButton(),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: StepProgressIndicator(
-              totalSteps:
-                  profileCardBloc.state.matchingProfile.profile.beers!.length,
-              currentStep: profileCardBloc.state.currentBeerIndex + 1,
-              selectedColor: Theme.of(context).colorScheme.primary,
-              unselectedColor: Colors.grey,
-              roundedEdges: const Radius.circular(5),
-              padding: 2,
+          if (beerListNotEmpty(context))
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: StepProgressIndicator(
+                totalSteps:
+                    profileCardBloc.state.matchingProfile.profile.beers!.length,
+                currentStep: profileCardBloc.state.currentBeerIndex + 1,
+                selectedColor: Theme.of(context).colorScheme.primary,
+                unselectedColor: Colors.grey,
+                roundedEdges: const Radius.circular(5),
+                padding: 2,
+              ),
             ),
-          ),
-          SizedBox.expand(
-            child: GestureDetector(
-                onPanUpdate: (details) {
-                  // Swiping in right direction.
-                  if (details.delta.dx > 0) {
-                    print('right swipe');
-                    profileCardBloc.add(ProfileCardShowPreviousBeer());
-                  }
+          if (beerListNotEmpty(context))
+            SizedBox.expand(
+              child: GestureDetector(
+                  onPanUpdate: (details) {
+                    // Swiping in right direction.
+                    if (details.delta.dx > 0) {
+                      print('right swipe');
+                      profileCardBloc.add(ProfileCardShowPreviousBeer());
+                    }
 
-                  // Swiping in left direction.
-                  if (details.delta.dx < 0) {
-                    print('left swipe');
-                    profileCardBloc.add(ProfileCardShowNextBeer());
-                  }
-                },
-                child: const _DisplayedImage()),
-          )
+                    // Swiping in left direction.
+                    if (details.delta.dx < 0) {
+                      print('left swipe');
+                      profileCardBloc.add(ProfileCardShowNextBeer());
+                    }
+                  },
+                  child: const _DisplayedImage()),
+            )
         ],
       ),
     );
+  }
+
+  bool beerListNotEmpty(BuildContext context) {
+    return context
+                .read<ProfileCardBloc>()
+                .state
+                .matchingProfile
+                .profile
+                .beers
+                ?.length !=
+            null &&
+        context
+            .read<ProfileCardBloc>()
+            .state
+            .matchingProfile
+            .profile
+            .beers!
+            .isNotEmpty;
   }
 }
 
