@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/router/app_router.dart';
+import '../../pairs/view/profile_preview_page.dart';
 import '../bloc/profile_bloc.dart';
 import 'widgets/avatar.dart';
 
@@ -44,9 +45,20 @@ class _ProfileViewState extends State<ProfileView> {
               String? name = state.profile.username;
               int? age = state.profile.age;
 
-              return Text(
-                '$name, $age',
-                style: Theme.of(context).textTheme.titleLarge,
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProfilePreviewPage(
+                              profile: state.profile,
+                            )),
+                  );
+                },
+                child: Text(
+                  '$name, $age',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
               );
             },
           ),
