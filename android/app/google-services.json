@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "41820867549",
+    "firebase_url": "https://bimbeer-af1dd-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "bimbeer-af1dd",
+    "storage_bucket": "bimbeer-af1dd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:41820867549:android:2df61b73bfd77654ef0434",
+        "android_client_info": {
+          "package_name": "com.example.bimbeer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "41820867549-j2bacqgotvpao3stl5154e09h2p13k06.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-s5A9yZDSIL5iQOZPpPvGVhoPeNyuYy4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "41820867549-3ttl3q9c6ttt6k680lnonn4kh03as9i6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

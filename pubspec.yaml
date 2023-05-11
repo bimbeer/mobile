@@ -1,14 +1,35 @@
 name: bimbeer
 description: A new Flutter project.
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
-  sdk: '>=2.19.6 <3.0.0'
+  sdk: ">=2.19.6 <3.0.0"
 
 dependencies:
+  bloc: ^8.1.1
+  cloud_firestore: ^4.5.2
+  equatable: ^2.0.5
+  firebase_auth: ^4.4.1
+  firebase_core: ^2.9.0
+  firebase_storage: ^11.1.1
   flutter:
     sdk: flutter
+  flutter_bloc: ^8.1.2
+  flutter_dotenv: ^5.0.2
+  flutter_facebook_auth: ^5.0.8
+  flutter_geo_hash: ^0.0.4
+  flutter_launcher_icons: ^0.13.1
+  formz: ^0.6.0
+  google_fonts: ^4.0.3
+  google_sign_in: ^6.1.0
+  http: ^0.13.5
+  image_cropper: ^3.0.2
+  image_picker: ^0.8.7+4
+  numberpicker: ^2.1.2
+  rxdart: ^0.27.7
+  step_progress_indicator: ^1.0.2
+  swipe_cards: ^2.0.0+1
 
 dev_dependencies:
   flutter_test:
@@ -17,3 +38,23 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - .env
+    - assets/icons/
+    - assets/images/
+    - assets/fonts/Pacifico/
+    - assets/fonts/Poppins/
+
+flutter_launcher_icons:
+  #  image_path: "assets/images/icon-128x128.png"
+  image_path_android: "assets/images/beer-android-icon.png"
+  android: true # can specify file name here e.g. "ic_launcher"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  remove_alpha_ios: true
+  background_color_android: "#000000"
+  web:
+    generate: false
+  windows:
+    generate: false
+  macos:
+    generate: false
