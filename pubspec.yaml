@@ -17,15 +17,15 @@ dependencies:
     sdk: flutter
   flutter_bloc: ^8.1.2
   flutter_dotenv: ^5.0.2
-  flutter_facebook_auth: ^5.0.8
+  flutter_facebook_auth: ^6.0.2
   flutter_geo_hash: ^0.0.4
   flutter_launcher_icons: ^0.13.1
   formz: ^0.6.0
-  google_fonts: ^4.0.3
+  google_fonts: ^6.1.0
   google_sign_in: ^6.1.0
-  http: ^0.13.5
-  image_cropper: ^3.0.2
-  image_picker: ^0.8.7+4
+  http: ^1.1.0
+  image_cropper: ^5.0.0
+  image_picker: ^1.0.4
   numberpicker: ^2.1.2
   rxdart: ^0.27.7
   step_progress_indicator: ^1.0.2
