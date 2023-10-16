@@ -29,9 +29,9 @@ class LocationView extends StatelessWidget {
                 const SnackBar(content: Text('Discovery settings updated')));
         }
       },
-      child: Scaffold(
+      child: const Scaffold(
         body: SafeArea(
-          child: Column(children: const [
+          child: Column(children: [
             EditScreenTitle(
               pageTitle: 'Discovery settings',
             ),

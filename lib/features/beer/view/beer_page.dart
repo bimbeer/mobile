@@ -23,7 +23,9 @@ class BeerView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const EditScreenTitle(pageTitle: 'Pick your favorite beers',),
+            const EditScreenTitle(
+              pageTitle: 'Pick your favorite beers',
+            ),
             BlocBuilder<BeerListBloc, BeerListState>(builder: (context, state) {
               if (state.status == BeerListStatus.loadingFailed) {
                 return Center(
@@ -48,9 +50,11 @@ class BeerView extends StatelessWidget {
                               duration: Duration(seconds: 2),
                               content:
                                   Text('Could not update selected beer.')));
-                      } else {
+                      } else if (state.status == BeerListStatus.loaded ||
+                          state.status == BeerListStatus.updated) {
                         return BeerTile(beer: state.beers[index]);
                       }
+                      return null;
                     },
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(

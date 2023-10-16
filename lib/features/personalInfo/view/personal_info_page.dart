@@ -1,5 +1,3 @@
-import 'package:bimbeer/core/presentation/loading_view.dart';
-import 'package:bimbeer/core/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -42,10 +40,10 @@ class PersonalInfoView extends StatelessWidget {
                 const SnackBar(content: Text('Personal info updated')));
         }
       },
-      child: Scaffold(
+      child: const Scaffold(
         body: SafeArea(
             child: SingleChildScrollView(
-          child: Column(children: const [
+          child: Column(children: [
             EditScreenTitle(
               pageTitle: 'Edit personal info',
             ),

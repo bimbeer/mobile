@@ -27,11 +27,11 @@ class PairsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
-      body: SafeArea(
+      body: const SafeArea(
           child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [NavBar(), PairsViewContent()],
+          children: [NavBar(), PairsViewContent()],
         ),
       )),
     );
@@ -73,8 +73,8 @@ class PairsViewContent extends StatelessWidget {
             ],
           );
         } else if (state is PairsLoading) {
-          return Column(
-            children: const [
+          return const Column(
+            children: [
               SizedBox(
                 height: 200,
               ),

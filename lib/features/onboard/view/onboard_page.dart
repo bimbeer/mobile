@@ -32,8 +32,8 @@ class OnboardView extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).canvasColor,
-        body: Stack(
-          children: const [
+        body: const Stack(
+          children: [
             Positioned.fill(
               child: Align(
                 alignment: Alignment.center,

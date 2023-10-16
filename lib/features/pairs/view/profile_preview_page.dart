@@ -27,20 +27,20 @@ class _ProfilePreviewView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: SafeArea(
           child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _Gallery(),
-          const SizedBox(
+          _Gallery(),
+          SizedBox(
             height: 20,
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 30),
+            padding: EdgeInsets.only(left: 30),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 _Title(),
                 SizedBox(
                   height: 10,
@@ -49,7 +49,7 @@ class _ProfilePreviewView extends StatelessWidget {
               ],
             ),
           ),
-          const Expanded(child: _Content())
+          Expanded(child: _Content())
         ],
       )),
     );
