@@ -35,7 +35,10 @@ class NavBarView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).popAndPushNamed(AppRoute.chatList);
+                    context.read<NavigationCubit>().navigateToChat();
+                  },
                   icon: Icon(
                     Icons.chat_bubble,
                     color: state is NavigationChat

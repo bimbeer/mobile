@@ -20,6 +20,18 @@ class InteractionsRepository {
     return _db.collection('interactions').doc(id).delete();
   }
 
+  Future<List<Interaction>> getAllInteractionsForUser(String userId) async {
+    final snapshot = await _db
+        .collection('interactions')
+        .where(Filter.or(Filter('sender', isEqualTo: userId),
+            Filter('recipient', isEqualTo: userId)))
+        .get();
+
+    return snapshot.docs
+        .map((doc) => Interaction.fromJson(doc.data()))
+        .toList();
+  }
+
   Stream<List<Interaction>> getInteractionsByRecipient(String recipientId) {
     return _db
         .collection('interactions')
@@ -34,6 +46,17 @@ class InteractionsRepository {
     return _db
         .collection('interactions')
         .where('sender', isEqualTo: senderId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => Interaction.fromJson(doc.data()))
+            .toList());
+  }
+
+  Stream<List<Interaction>> interactionsStreamForUser(String userId) {
+    return _db
+        .collection('interactions')
+        .where(Filter.or(Filter('sender', isEqualTo: userId),
+            Filter('recipient', isEqualTo: userId)))
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => Interaction.fromJson(doc.data()))

@@ -1,6 +1,8 @@
 import 'package:bimbeer/core/presentation/splash_page.dart';
 import 'package:bimbeer/features/authentication/view/login_page.dart';
 import 'package:bimbeer/features/authentication/view/sign_up_page.dart';
+import 'package:bimbeer/features/chat/view/chat_list_page.dart';
+import 'package:bimbeer/features/chat/view/chat_page.dart';
 import 'package:bimbeer/features/location/view/location_page.dart';
 import 'package:bimbeer/features/pairs/view/pairs_page.dart';
 import 'package:bimbeer/features/profile/view/profile_page.dart';
@@ -34,6 +36,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const LocationPage());
       case AppRoute.settings:
         return MaterialPageRoute(builder: (_) => const SettingsPage());
+      case AppRoute.chatList:
+        return MaterialPageRoute(builder: (_) => const ChatListPage());
+      case AppRoute.chatPage:
+        return MaterialPageRoute(builder: (_) => const ChatPage());
       default:
         return MaterialPageRoute(builder: (_) => const SplashPage());
     }
@@ -51,4 +57,6 @@ abstract class AppRoute {
   static const String pickBeer = '/pick-beer';
   static const String location = '/location';
   static const String settings = '/settings';
+  static const String chatList = '/chat-list';
+  static const String chatPage = '/chat-page';
 }

@@ -1,4 +1,6 @@
 import 'package:bimbeer/core/presentation/theme.dart';
+import 'package:bimbeer/features/chat/bloc/chat_bloc.dart';
+import 'package:bimbeer/features/chat/data/repositories/message_repository.dart';
 import 'package:bimbeer/features/location/data/repositories/location_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,18 +26,21 @@ class App extends StatefulWidget {
       required ProfileRepository profileRepository,
       required StorageRepository storageRepository,
       required LocationRepository locationRepository,
-      required InteractionsRepository interactionsRepository})
+      required InteractionsRepository interactionsRepository,
+      required MessageRepository messageRepository})
       : _authenticationRepository = authenticationRepository,
         _profileRepository = profileRepository,
         _storageRepository = storageRepository,
         _locationRepository = locationRepository,
-        _interactionsRepository = interactionsRepository;
+        _interactionsRepository = interactionsRepository,
+        _messageRepository = messageRepository;
 
   final AuthenticaionRepository _authenticationRepository;
   final ProfileRepository _profileRepository;
   final StorageRepository _storageRepository;
   final LocationRepository _locationRepository;
   final InteractionsRepository _interactionsRepository;
+  final MessageRepository _messageRepository;
 
   @override
   State<App> createState() => _AppState();
@@ -81,6 +86,13 @@ class _AppState extends State<App> {
     interactionsRepository: widget._interactionsRepository,
   )..add(PairsFetched());
 
+  late final _chatBloc = ChatBloc(
+    authenticationRepository: widget._authenticationRepository,
+    profileRepository: widget._profileRepository,
+    interactionsRepository: widget._interactionsRepository,
+    messageRepository: widget._messageRepository,
+  )..add(const ChatListFetched());
+
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
@@ -99,6 +111,7 @@ class _AppState extends State<App> {
           BlocProvider.value(value: _avatarBloc),
           BlocProvider.value(value: _locationBloc),
           BlocProvider.value(value: _pairsBloc),
+          BlocProvider.value(value: _chatBloc),
         ],
         child: AppView(appRouter: AppRouter()),
       ),
