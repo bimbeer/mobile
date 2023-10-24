@@ -79,6 +79,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   void _onChatListUpdated(ChatListUpdated event, Emitter<ChatState> emit) {
+    emit(ChatListLoading());
     emit(ChatListLoaded(chatDetails: event.chatDetails));
   }
 
@@ -98,7 +99,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
       sentByUser.listen((messages) {
         if (messages.isNotEmpty) {
-          detailedChat = _handleDetailedChatUpdate(messages, detailedChat);
+          _handleDetailedChatUpdate(messages, detailedChat);
           add(ChatListUpdated(chatDetails: chatDetails));
         }
       });
@@ -108,18 +109,16 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
       receivedByUser.listen((messages) {
         if (messages.isNotEmpty) {
-          detailedChat = _handleDetailedChatUpdate(messages, detailedChat);
+          _handleDetailedChatUpdate(messages, detailedChat);
           add(ChatListUpdated(chatDetails: chatDetails));
         }
       });
     }
   }
 
-  ChatDetails _handleDetailedChatUpdate(
+  void _handleDetailedChatUpdate(
       List<Message> messages, ChatDetails detailedChat) {
     final lastMessage = messages.first;
     detailedChat.messages.add(lastMessage);
-    detailedChat = detailedChat.copyWith(messages: messages);
-    return detailedChat;
   }
 }
