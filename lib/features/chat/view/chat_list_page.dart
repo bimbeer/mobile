@@ -1,5 +1,6 @@
 import 'package:bimbeer/core/router/app_router.dart';
 import 'package:bimbeer/features/chat/bloc/chat_bloc.dart';
+import 'package:bimbeer/features/chat/bloc/conversation_bloc.dart';
 import 'package:bimbeer/features/chat/models/chat_details.dart';
 import 'package:bimbeer/features/navigation/view/navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,7 @@ class ChatListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chatBloc = context.watch<ChatBloc>();
-    final chatState = chatBloc.state;
+    final chatState = context.watch<ChatBloc>().state;
 
     Widget getChildView() {
       if (chatState is ChatListLoading) {
@@ -40,7 +40,7 @@ class ChatListView extends StatelessWidget {
           children: [
             const NavBar(),
             Expanded(
-              child: Container(
+              child: SizedBox(
                 // Limit the height of the inner ListView if needed
                 height: 400,
                 child: getChildView(),
@@ -86,11 +86,12 @@ class ChatPreviewTile extends StatelessWidget {
               backgroundImage: NetworkImage(chatDetails.chatPreview.avatarUrl),
             ),
       title: Text(chatDetails.chatPreview.name),
-      subtitle: Text(chatDetails.chatPreview.lastMessage == null
-          ? ""
-          : chatDetails.chatPreview.lastMessage!.text),
+      subtitle: Text(
+          chatDetails.messages.isEmpty ? "" : chatDetails.messages.last.text),
       onTap: () {
-        context.read<ChatBloc>().add(ChatRoomEntered(chatDetails: chatDetails));
+        context
+            .read<ConversationBloc>()
+            .add(ConversationEntered(chatDetails: chatDetails));
         Navigator.of(context).pushNamed(AppRoute.chatPage);
       },
     );

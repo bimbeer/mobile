@@ -1,5 +1,6 @@
 import 'package:bimbeer/core/presentation/theme.dart';
 import 'package:bimbeer/features/chat/bloc/chat_bloc.dart';
+import 'package:bimbeer/features/chat/bloc/conversation_bloc.dart';
 import 'package:bimbeer/features/chat/data/repositories/message_repository.dart';
 import 'package:bimbeer/features/location/data/repositories/location_repository.dart';
 import 'package:flutter/material.dart';
@@ -93,6 +94,9 @@ class _AppState extends State<App> {
     messageRepository: widget._messageRepository,
   )..add(const ChatListFetched());
 
+  late final _conversationBloc =
+      ConversationBloc(messageRepository: widget._messageRepository);
+
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
@@ -112,6 +116,7 @@ class _AppState extends State<App> {
           BlocProvider.value(value: _locationBloc),
           BlocProvider.value(value: _pairsBloc),
           BlocProvider.value(value: _chatBloc),
+          BlocProvider.value(value: _conversationBloc),
         ],
         child: AppView(appRouter: AppRouter()),
       ),
@@ -128,6 +133,8 @@ class _AppState extends State<App> {
     _avatarBloc.close();
     _locationBloc.close();
     _pairsBloc.close();
+    _chatBloc.close();
+    _conversationBloc.close();
     super.dispose();
   }
 }

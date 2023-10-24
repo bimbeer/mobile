@@ -2,7 +2,7 @@ import 'package:bimbeer/core/presentation/splash_page.dart';
 import 'package:bimbeer/features/authentication/view/login_page.dart';
 import 'package:bimbeer/features/authentication/view/sign_up_page.dart';
 import 'package:bimbeer/features/chat/view/chat_list_page.dart';
-import 'package:bimbeer/features/chat/view/chat_page.dart';
+import 'package:bimbeer/features/chat/view/conversation_page.dart';
 import 'package:bimbeer/features/location/view/location_page.dart';
 import 'package:bimbeer/features/pairs/view/pairs_page.dart';
 import 'package:bimbeer/features/profile/view/profile_page.dart';
@@ -39,7 +39,7 @@ class AppRouter {
       case AppRoute.chatList:
         return MaterialPageRoute(builder: (_) => const ChatListPage());
       case AppRoute.chatPage:
-        return MaterialPageRoute(builder: (_) => const ChatPage());
+        return MaterialPageRoute(builder: (_) => const ConversationPage());
       default:
         return MaterialPageRoute(builder: (_) => const SplashPage());
     }

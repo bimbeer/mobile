@@ -2,9 +2,11 @@ import 'package:bimbeer/features/authentication/data/repositories/authentication
 import 'package:bimbeer/features/chat/data/repositories/message_repository.dart';
 import 'package:bimbeer/features/chat/models/chat_details.dart';
 import 'package:bimbeer/features/chat/models/chat_preview.dart';
+import 'package:bimbeer/features/chat/models/message.dart';
 import 'package:bimbeer/features/pairs/data/repositories/interactions_repository.dart';
 import 'package:bimbeer/features/profile/data/repositories/profile_repository.dart';
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 part 'chat_event.dart';
@@ -23,7 +25,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         super(ChatInitial()) {
     on<ChatListFetched>(_onChatListFetched);
     on<ChatListUpdated>(_onChatListUpdated);
-    on<ChatRoomEntered>(_onChatRoomEntered);
   }
 
   final AuthenticaionRepository _authenticationRepository;
@@ -45,21 +46,25 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             ? interaction.recipient
             : interaction.sender;
 
+        if (chatDetails
+            .any((element) => element.chatPreview.pairId == pairId)) {
+          continue;
+        }
+
         final messagesFromUser =
             await _messageRepository.getMessages(userId, pairId);
         final messagesFromPair =
             await _messageRepository.getMessages(pairId, userId);
 
         final messages = [...messagesFromUser, ...messagesFromPair];
-        messages.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+        messages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
         final pairProfile = await _profileRepository.get(pairId);
 
         final chatPreview = ChatPreview(
             pairId: pairId,
             name: pairProfile.username!,
-            avatarUrl: pairProfile.avatar!,
-            lastMessage: messages.isNotEmpty ? messages.first : null);
+            avatarUrl: pairProfile.avatar!);
 
         final detailedChat = ChatDetails(
           messages: messages,
@@ -81,26 +86,40 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   void _subscribeToMessages(List<ChatDetails> chatDetails) {
     final userId = _authenticationRepository.currentUser.id;
 
-    for (var deatiledChat in chatDetails) {
-      final pairId = deatiledChat.chatPreview.pairId;
+    for (var detailedChat in chatDetails) {
+      final pairId = detailedChat.chatPreview.pairId;
 
-      final sentByUser = _messageRepository.messagesStream(userId, pairId);
+      Timestamp? lastMessageTimestamp = detailedChat.messages.isNotEmpty
+          ? detailedChat.messages.last.timestamp
+          : null;
 
-      sentByUser.listen((event) {
-        deatiledChat.messages.addAll(event);
-        add(ChatListUpdated(chatDetails: chatDetails));
+      final sentByUser = _messageRepository.messagesStream(
+          userId, pairId, lastMessageTimestamp);
+
+      sentByUser.listen((messages) {
+        if (messages.isNotEmpty) {
+          detailedChat = _handleDetailedChatUpdate(messages, detailedChat);
+          add(ChatListUpdated(chatDetails: chatDetails));
+        }
       });
 
-      final receivedByUser = _messageRepository.messagesStream(pairId, userId);
+      final receivedByUser = _messageRepository.messagesStream(
+          pairId, userId, lastMessageTimestamp);
 
-      receivedByUser.listen((event) {
-        deatiledChat.messages.addAll(event);
-        add(ChatListUpdated(chatDetails: chatDetails));
+      receivedByUser.listen((messages) {
+        if (messages.isNotEmpty) {
+          detailedChat = _handleDetailedChatUpdate(messages, detailedChat);
+          add(ChatListUpdated(chatDetails: chatDetails));
+        }
       });
     }
   }
 
-  void _onChatRoomEntered(ChatRoomEntered event, Emitter<ChatState> emit) {
-    emit(ChatRoomLoaded(chatDetails: event.chatDetails));
+  ChatDetails _handleDetailedChatUpdate(
+      List<Message> messages, ChatDetails detailedChat) {
+    final lastMessage = messages.first;
+    detailedChat.messages.add(lastMessage);
+    detailedChat = detailedChat.copyWith(messages: messages);
+    return detailedChat;
   }
 }

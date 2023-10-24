@@ -22,12 +22,3 @@ class ChatListUpdated extends ChatEvent {
   @override
   List<Object> get props => [chatDetails];
 }
-
-class ChatRoomEntered extends ChatEvent {
-  const ChatRoomEntered({required this.chatDetails});
-
-  final ChatDetails chatDetails;
-
-  @override
-  List<Object> get props => [chatDetails];
-}

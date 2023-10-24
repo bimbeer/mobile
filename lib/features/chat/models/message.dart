@@ -1,15 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 class Message extends Equatable {
-  final String id;
+  final String? id;
   final String recipientId;
   final String senderId;
   final String text;
   final String status;
-  final DateTime timestamp;
+  final Timestamp timestamp;
 
   const Message({
-    required this.id,
+    this.id,
     required this.recipientId,
     required this.senderId,
     required this.text,
@@ -23,7 +24,7 @@ class Message extends Equatable {
     String? senderId,
     String? text,
     String? status,
-    DateTime? timestamp,
+    Timestamp? timestamp,
   }) {
     return Message(
       id: id ?? this.id,
@@ -37,7 +38,6 @@ class Message extends Equatable {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'pairId': recipientId,
       'uid': senderId,
       'text': text,
@@ -58,5 +58,6 @@ class Message extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, recipientId, senderId, text, status, timestamp];
+  List<Object?> get props =>
+      [id, recipientId, senderId, text, status, timestamp];
 }

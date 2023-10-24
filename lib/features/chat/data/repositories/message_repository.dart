@@ -22,11 +22,22 @@ class MessageRepository {
     return snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList();
   }
 
-  Stream<List<Message>> messagesStream(String senderId, String recipientId) {
+  Stream<List<Message>> messagesStream(String senderId, String recipientId,
+      [Timestamp? lastMessageTimestamp]) {
+    final Filter filter;
+    if (lastMessageTimestamp == null) {
+      filter = Filter.and(Filter('uid', isEqualTo: senderId),
+          Filter('pairId', isEqualTo: recipientId));
+    } else {
+      filter = Filter.and(
+          Filter('uid', isEqualTo: senderId),
+          Filter('pairId', isEqualTo: recipientId),
+          Filter('createdAt', isGreaterThan: lastMessageTimestamp));
+    }
+
     return _db
         .collection('messages')
-        .where(Filter.and(Filter('uid', isEqualTo: senderId),
-            Filter('pairId', isEqualTo: recipientId)))
+        .where(filter)
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) =>

@@ -28,19 +28,3 @@ final class ChatListLoadingError extends ChatState {
   @override
   List<Object> get props => [error];
 }
-
-final class ChatRoomLoaded extends ChatState {
-  const ChatRoomLoaded({required this.chatDetails});
-
-  final ChatDetails chatDetails;
-
-  @override
-  List<Object> get props => [chatDetails];
-}
-
-final class ChatRoomLoading extends ChatState {
-  const ChatRoomLoading();
-
-  @override
-  List<Object> get props => [];
-}

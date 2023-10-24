@@ -8,6 +8,16 @@ class ChatDetails extends Equatable {
 
   const ChatDetails({required this.messages, required this.chatPreview});
 
+  ChatDetails copyWith({
+    List<Message>? messages,
+    ChatPreview? chatPreview,
+  }) {
+    return ChatDetails(
+      messages: messages ?? this.messages,
+      chatPreview: chatPreview ?? this.chatPreview,
+    );
+  }
+
   @override
   List<Object?> get props => [messages, chatPreview];
 }
