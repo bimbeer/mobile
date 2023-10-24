@@ -1,5 +1,6 @@
 import 'package:bimbeer/core/presentation/widgets/pop_page_button.dart';
 import 'package:bimbeer/features/authentication/data/repositories/authentication_repository.dart';
+import 'package:bimbeer/features/chat/bloc/chat_bloc.dart';
 import 'package:bimbeer/features/chat/bloc/conversation_bloc.dart';
 import 'package:bimbeer/features/chat/models/chat_details.dart';
 import 'package:bimbeer/features/chat/models/message.dart';
@@ -128,18 +129,22 @@ class ConversationMessages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      reverse: true,
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        margin: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            for (final message in messages)
-              ConversationMessage(message: message),
-          ],
-        ),
-      ),
+    return BlocBuilder<ChatBloc, ChatState>(
+      builder: (context, state) {
+        return SingleChildScrollView(
+          reverse: true,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            margin: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                for (final message in messages)
+                  ConversationMessage(message: message),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

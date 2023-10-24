@@ -20,9 +20,7 @@ class ChatListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chatState = context.watch<ChatBloc>().state;
-
-    Widget getChildView() {
+    Widget getChildView(ChatState chatState) {
       if (chatState is ChatListLoading) {
         return const Center(child: CircularProgressIndicator());
       } else if (chatState is ChatListLoaded) {
@@ -32,24 +30,25 @@ class ChatListView extends StatelessWidget {
       }
     }
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).canvasColor,
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const NavBar(),
-            Expanded(
-              child: SizedBox(
-                // Limit the height of the inner ListView if needed
-                height: 400,
-                child: getChildView(),
+    return BlocBuilder<ChatBloc, ChatState>(builder: (context, state) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).canvasColor,
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const NavBar(),
+              Expanded(
+                child: SizedBox(
+                  height: 400,
+                  child: getChildView(state),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 
@@ -75,6 +74,8 @@ class ChatPreviewTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ChatBloc>().state;
+
     return ListTile(
       leading: chatDetails.chatPreview.avatarUrl == ""
           ? const CircleAvatar(
