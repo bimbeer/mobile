@@ -1,3 +1,5 @@
+import 'package:bimbeer/app/bloc/app_bloc.dart';
+import 'package:bimbeer/app/view/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -41,7 +43,9 @@ class SelectAvatarOptionsView extends StatelessWidget {
           Column(children: [
             _SelectPhoto(
               onTap: () {
-                context.read<AvatarBloc>().add(const AvatarChangeRequested(ImageSource.gallery));
+                final userId = context.read<AppBloc>().state.user.id;
+                final profile = context.read<AppBloc>().state.profile;
+                context.read<AvatarBloc>().add(AvatarChangeRequested(userId: userId, profile: profile, imageSource: ImageSource.gallery));
               },
               icon: Icons.image,
               textLabel: 'Browse Gallery',
@@ -59,7 +63,9 @@ class SelectAvatarOptionsView extends StatelessWidget {
             ),
             _SelectPhoto(
               onTap: () {
-                context.read<AvatarBloc>().add(const AvatarChangeRequested(ImageSource.camera));
+                final userId = context.read<AppBloc>().state.user.id;
+                final profile = context.read<AppBloc>().state.profile;
+                context.read<AvatarBloc>().add(AvatarChangeRequested(userId: userId, profile: profile, imageSource: ImageSource.camera));
               },
               icon: Icons.camera_alt_outlined,
               textLabel: 'Use a Camera',

@@ -1,3 +1,4 @@
+import 'package:bimbeer/app/bloc/app_bloc.dart';
 import 'package:bimbeer/core/presentation/asset_path.dart';
 import 'package:bimbeer/features/navigation/view/navigation_bar.dart';
 import 'package:bimbeer/features/pairs/view/profile_preview_page.dart';
@@ -15,7 +16,8 @@ class PairsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<PairsBloc>().add(PairsFetched());
+    final String userId = context.read<AppBloc>().state.user.id;
+    context.read<PairsBloc>().add(PairsFetched(userId));
     return const PairsView();
   }
 }
@@ -49,13 +51,15 @@ class PairsViewContent extends StatelessWidget {
       builder: (context, state) {
         if (state is PairsNotEmpty) {
           final swipeItems = <SwipeItem>[
-            ...state.matchingProfiles.map((e) => SwipeItem(
-                content: e,
+            ...state.matchingProfiles.map((matchingProfile) => SwipeItem(
+                content: matchingProfile,
                 likeAction: () {
-                  context.read<PairsBloc>().add(PairLiked(e));
+                  final userId = context.read<AppBloc>().state.user.id;
+                  context.read<PairsBloc>().add(PairLiked(userId: userId, matchingProfile: matchingProfile));
                 },
                 nopeAction: () {
-                  context.read<PairsBloc>().add(PairDisliked(e));
+                  final userId = context.read<AppBloc>().state.user.id;
+                  context.read<PairsBloc>().add(PairDisliked(userId: userId, matchingProfile: matchingProfile));
                 }))
           ];
           matchEngine = MatchEngine(swipeItems: swipeItems);
@@ -97,7 +101,8 @@ class PairsViewContent extends StatelessWidget {
               ),
               OutlinedButton(
                 onPressed: () {
-                  context.read<PairsBloc>().add(PairsFetched());
+                  final userId = context.read<AppBloc>().state.user.id;
+                  context.read<PairsBloc>().add(PairsFetched(userId));
                 },
                 style: OutlinedButton.styleFrom(
                   fixedSize: const Size(70, 70),

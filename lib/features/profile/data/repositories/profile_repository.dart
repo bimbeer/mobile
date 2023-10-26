@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:bimbeer/features/profile/models/profile.dart';
 import 'package:bimbeer/features/profile/models/profile_match.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' hide GeoPoint;
@@ -12,9 +13,6 @@ class ProfileRepository {
       : _db = db ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _db;
-  Profile? _cachedProfile;
-
-  Profile get currentProfile => _cachedProfile ?? Profile.empty;
 
   Stream<Profile> profileStream(String id) {
     if (id == '') return const Stream.empty();
@@ -29,30 +27,24 @@ class ProfileRepository {
     if (id == '') return Profile.empty;
     final docRef = _db.collection('profile').doc(id);
     final snapshot = await docRef.get();
-    late Profile profile;
     if (snapshot.exists) {
-      profile = Profile.fromJson(snapshot.data()!);
-    } else {
-      profile = Profile.empty;
-    }
-    _updateCache(profile);
-    return profile;
+      return Profile.fromJson(snapshot.data()!);
+    } 
+    return Profile.empty;
   }
 
   Future<void> add(String id, Profile profile) async {
     final docRef = _db.collection('profile').doc(id);
     await docRef.set(profile.toMap());
-    _updateCache(profile);
   }
 
   Future<void> edit({required String id, required Profile profile}) async {
     final docRef = _db.collection('profile').doc(id);
     await docRef.update(profile.toMap());
-    _updateCache(profile);
   }
 
   Future<List<MatchingProfile>> getMatchingProfiles(String id) async {
-    final profile = _cachedProfile ?? await get(id);
+    final profile = await get(id);
     final latitude = profile.location?.position?.coordinates[0];
     final longtitude = profile.location?.position?.coordinates[1];
 
@@ -129,9 +121,5 @@ class ProfileRepository {
       }
     }
     return false;
-  }
-
-  void _updateCache(Profile profile) {
-    _cachedProfile = profile;
   }
 }

@@ -1,4 +1,3 @@
-import 'package:bimbeer/features/authentication/data/repositories/authentication_repository.dart';
 import 'package:bimbeer/features/pairs/models/interaction.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -16,10 +15,8 @@ const String dislike = 'dislike';
 class PairsBloc extends Bloc<PairsEvent, PairsState> {
   PairsBloc(
       {required ProfileRepository profileRepository,
-      required AuthenticaionRepository authenticationRepository,
       required InteractionsRepository interactionsRepository})
       : _profileRepository = profileRepository,
-        _authenticationRepository = authenticationRepository,
         _interactionsRepository = interactionsRepository,
         super(PairsEmpty()) {
     on<PairsFetched>(_onPairsFetched);
@@ -29,18 +26,17 @@ class PairsBloc extends Bloc<PairsEvent, PairsState> {
   }
 
   final ProfileRepository _profileRepository;
-  final AuthenticaionRepository _authenticationRepository;
   final InteractionsRepository _interactionsRepository;
 
   void _onPairsFetched(PairsFetched event, Emitter<PairsState> emit) async {
-    if (_authenticationRepository.currentUser.id == '') {
+    if (event.userId == '') {
       return emit(PairsEmpty());
     }
 
     emit(PairsLoading());
     try {
-      final matches = await _profileRepository
-          .getMatchingProfiles(_authenticationRepository.currentUser.id);
+      final matches =
+          await _profileRepository.getMatchingProfiles(event.userId);
       if (matches.isNotEmpty) {
         emit(PairsNotEmpty(matches));
       } else {
@@ -59,7 +55,7 @@ class PairsBloc extends Bloc<PairsEvent, PairsState> {
     final interaction = Interaction(
         reactionType: like,
         recipient: event.matchingProfile.id,
-        sender: _authenticationRepository.currentUser.id);
+        sender: event.userId);
 
     _interactionsRepository.addInteraction(interaction);
   }
@@ -68,7 +64,7 @@ class PairsBloc extends Bloc<PairsEvent, PairsState> {
     final interaction = Interaction(
         reactionType: dislike,
         recipient: event.matchingProfile.id,
-        sender: _authenticationRepository.currentUser.id);
+        sender: event.userId);
 
     _interactionsRepository.addInteraction(interaction);
   }

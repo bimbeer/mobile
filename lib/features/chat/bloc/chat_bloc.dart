@@ -1,4 +1,3 @@
-import 'package:bimbeer/features/authentication/data/repositories/authentication_repository.dart';
 import 'package:bimbeer/features/chat/data/repositories/message_repository.dart';
 import 'package:bimbeer/features/chat/models/chat_details.dart';
 import 'package:bimbeer/features/chat/models/chat_preview.dart';
@@ -14,12 +13,10 @@ part 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc(
-      {required AuthenticaionRepository authenticationRepository,
-      required ProfileRepository profileRepository,
+      {required ProfileRepository profileRepository,
       required InteractionsRepository interactionsRepository,
       required MessageRepository messageRepository})
-      : _authenticationRepository = authenticationRepository,
-        _interactionsRepository = interactionsRepository,
+      : _interactionsRepository = interactionsRepository,
         _profileRepository = profileRepository,
         _messageRepository = messageRepository,
         super(ChatInitial()) {
@@ -27,7 +24,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatListUpdated>(_onChatListUpdated);
   }
 
-  final AuthenticaionRepository _authenticationRepository;
   final ProfileRepository _profileRepository;
   final InteractionsRepository _interactionsRepository;
   final MessageRepository _messageRepository;
@@ -35,7 +31,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   void _onChatListFetched(
       ChatListFetched event, Emitter<ChatState> emit) async {
     emit(ChatListLoading());
-    final userId = _authenticationRepository.currentUser.id;
+    final userId = event.userId;
     final interactions =
         await _interactionsRepository.getAllInteractionsForUser(userId);
 
@@ -75,7 +71,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       }
     }
     emit(ChatListLoaded(chatDetails: chatDetails));
-    _subscribeToMessages(chatDetails);
+    _subscribeToMessages(event.userId, chatDetails);
   }
 
   void _onChatListUpdated(ChatListUpdated event, Emitter<ChatState> emit) {
@@ -84,9 +80,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   // TODO: add new chat details when new interaction is added
-  void _subscribeToMessages(List<ChatDetails> chatDetails) {
-    final userId = _authenticationRepository.currentUser.id;
-
+  void _subscribeToMessages(String userId, List<ChatDetails> chatDetails) {
     for (var detailedChat in chatDetails) {
       final pairId = detailedChat.chatPreview.pairId;
 

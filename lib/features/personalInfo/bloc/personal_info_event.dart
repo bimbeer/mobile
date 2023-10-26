@@ -10,8 +10,10 @@ class PersonalInfoLoaded extends PersonalInfoEvent {
 }
 
 class FormSubmitted extends PersonalInfoEvent { 
-  const FormSubmitted({required this.userId});
+  const FormSubmitted({required this.profile, required this.userId});
+
   final String userId;
+  final Profile profile;
 }
 
 class UsernameChanged extends PersonalInfoEvent {

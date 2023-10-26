@@ -1,3 +1,4 @@
+import 'package:bimbeer/app/bloc/app_bloc.dart';
 import 'package:bimbeer/features/profile/models/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -87,7 +88,9 @@ class BeerTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          context.read<BeerListBloc>().add(BeerToggled(beer));
+          final userId = context.read<AppBloc>().state.user.id;
+          final profile = context.read<AppBloc>().state.profile;
+          context.read<BeerListBloc>().add(BeerToggled(userId: userId, profile: profile, beer: beer));
         },
         child: BlocBuilder<BeerListBloc, BeerListState>(
           buildWhen: (previous, current) {

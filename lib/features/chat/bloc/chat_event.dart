@@ -8,10 +8,12 @@ sealed class ChatEvent extends Equatable {
 }
 
 class ChatListFetched extends ChatEvent {
-  const ChatListFetched();
+  const ChatListFetched({required this.userId});
+
+  final String userId;
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [userId];
 }
 
 class ChatListUpdated extends ChatEvent {

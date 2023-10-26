@@ -469,9 +469,10 @@ class _SavePersonalInfoButton extends StatelessWidget {
             key: const Key('personalInfoForm_save_elevatedButton'),
             onPressed: () {
               final userId = context.read<AppBloc>().state.user.id;
+              final profile = context.read<AppBloc>().state.profile;
               context
                   .read<PersonalInfoBloc>()
-                  .add(FormSubmitted(userId: userId));
+                  .add(FormSubmitted(userId: userId, profile: profile));
             },
             style: buttonStyle,
             child: const Center(

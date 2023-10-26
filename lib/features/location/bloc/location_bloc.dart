@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:bimbeer/features/authentication/data/repositories/authentication_repository.dart';
 import 'package:bimbeer/features/profile/models/profile.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -20,14 +17,11 @@ const int searchCitiesDebounceMs = 1000;
 
 class LocationBloc extends Bloc<LocationEvent, LocationState> {
   LocationBloc(
-      {required AuthenticaionRepository authenticationRepository,
-      required ProfileRepository profileRepository,
+      {required ProfileRepository profileRepository,
       required LocationRepository locationRepository})
-      : _authenticationRepository = authenticationRepository,
-        _profileRepository = profileRepository,
+      : _profileRepository = profileRepository,
         _locationRepository = locationRepository,
         super(LocationInitial()) {
-    _listenToProfile();
     on<LocationInitialized>(_onLocationInitialized);
     on<LocationLoaded>(_onLocationLoaded);
     on<LocationUpdated>(_onLocationUpdated);
@@ -41,17 +35,13 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     on<LocationFormSubmitted>(_onLocationFormSubmitted);
   }
 
-  final AuthenticaionRepository _authenticationRepository;
   final ProfileRepository _profileRepository;
   final LocationRepository _locationRepository;
-  late final StreamSubscription _profileSubscription;
-  Profile _cachedProfile = Profile.empty;
 
   void _onLocationInitialized(
       LocationInitialized event, Emitter<LocationState> emit) {
-    final location =
-        LocationInput.dirty(_profileRepository.currentProfile.location!.label);
-    final range = _profileRepository.currentProfile.range;
+    final location = LocationInput.dirty(event.profile.location!.label);
+    final range = event.profile.range;
     emit(state.copyWith(
         locationInput: location, range: range, fetchedCities: [], city: null));
   }
@@ -87,7 +77,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     }
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
 
-    final profile = _profileRepository.currentProfile;
+    final profile = event.profile;
     final label = city.address.label;
     final lat = city.position.lat;
     final lng = city.position.lng;
@@ -102,9 +92,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
     final updatedProfile = profile.copyWith(location: location, range: range);
     try {
-      _profileRepository.edit(
-          id: _authenticationRepository.currentUser.id,
-          profile: updatedProfile);
+      _profileRepository.edit(id: event.userId, profile: updatedProfile);
       emit(state.copyWith(status: FormzSubmissionStatus.success));
     } catch (e) {
       emit(state.copyWith(status: FormzSubmissionStatus.failure));
@@ -127,23 +115,5 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       range: event.range,
       status: FormzSubmissionStatus.initial,
     ));
-  }
-
-  void _listenToProfile() {
-    _profileSubscription = _profileRepository
-        .profileStream(_authenticationRepository.currentUser.id)
-        .listen((profile) => {
-              if (profile.location != _cachedProfile.location)
-                {
-                  add(LocationLoaded(profile)),
-                  _cachedProfile = profile,
-                }
-            });
-  }
-
-  @override
-  Future<void> close() {
-    _profileSubscription.cancel();
-    return super.close();
   }
 }

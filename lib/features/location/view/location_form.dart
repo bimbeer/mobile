@@ -1,3 +1,4 @@
+import 'package:bimbeer/app/bloc/app_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -17,7 +18,6 @@ class _LocationFormState extends State<LocationForm> {
   @override
   void initState() {
     _locationInputController = TextEditingController();
-    context.read<LocationBloc>().add(LocationInitialized());
     super.initState();
   }
 
@@ -172,8 +172,13 @@ class _SaveLocationButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 30),
         child: ElevatedButton(
           key: const Key('editLocationForm_submitButton'),
-          onPressed: () =>
-              context.read<LocationBloc>().add(LocationFormSubmitted()),
+          onPressed: () {
+            final userId = context.read<AppBloc>().state.user.id;
+            final profile = context.read<AppBloc>().state.profile;
+            context
+                .read<LocationBloc>()
+                .add(LocationFormSubmitted(userId: userId, profile: profile));
+          },
           style: buttonStyle,
           child: Center(
             heightFactor: 1.5,

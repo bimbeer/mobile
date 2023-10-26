@@ -1,5 +1,5 @@
+import 'package:bimbeer/app/bloc/app_bloc.dart';
 import 'package:bimbeer/core/presentation/widgets/pop_page_button.dart';
-import 'package:bimbeer/features/authentication/data/repositories/authentication_repository.dart';
 import 'package:bimbeer/features/chat/bloc/chat_bloc.dart';
 import 'package:bimbeer/features/chat/bloc/conversation_bloc.dart';
 import 'package:bimbeer/features/chat/models/chat_details.dart';
@@ -156,7 +156,7 @@ class ConversationMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userId = context.read<AuthenticaionRepository>().currentUser.id;
+    final userId = context.read<AppBloc>().state.user.id;
 
     return Align(
       alignment:
@@ -197,7 +197,7 @@ class _ConversationControlsState extends State<ConversationControls> {
 
   @override
   Widget build(BuildContext context) {
-    var userId = context.read<AuthenticaionRepository>().currentUser.id;
+    var userId = context.read<AppBloc>().state.user.id;
 
     return Container(
       margin: const EdgeInsets.all(10),

@@ -13,3 +13,9 @@ class _AppUserChanged extends AppEvent {
 
   final User user;
 }
+
+class _AppUserProfileChanged extends AppEvent {
+  const _AppUserProfileChanged(this.profile);
+
+  final Profile profile;
+}

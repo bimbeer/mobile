@@ -1,12 +1,10 @@
+import 'package:bimbeer/app/bloc/app_bloc.dart';
 import 'package:bimbeer/features/navigation/view/navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../app/bloc/app_bloc.dart';
 import '../../../core/router/app_router.dart';
 import '../../pairs/view/profile_preview_page.dart';
-import '../bloc/profile_bloc.dart';
-import '../data/repositories/profile_repository.dart';
 import 'widgets/avatar.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -14,30 +12,13 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: context
-            .read<ProfileRepository>()
-            .get(context.read<AppBloc>().state.user.id),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            context
-                .watch<ProfileBloc>()
-                .add(ProfileFetched(profile: snapshot.data!));
-          }
-
-          return const ProfileView();
-        });
+    return const ProfileView();
   }
 }
 
-class ProfileView extends StatefulWidget {
+class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
 
-  @override
-  State<ProfileView> createState() => _ProfileViewState();
-}
-
-class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +31,7 @@ class _ProfileViewState extends State<ProfileView> {
           const SizedBox(
             height: 20,
           ),
-          BlocBuilder<ProfileBloc, ProfileState>(
+          BlocBuilder<AppBloc, AppState>(
             buildWhen: (previous, current) {
               return previous.profile.username != current.profile.username ||
                   previous.profile.age != current.profile.age;
@@ -64,8 +45,7 @@ class _ProfileViewState extends State<ProfileView> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            BlocBuilder<ProfileBloc, ProfileState>(
+                        builder: (context) => BlocBuilder<AppBloc, AppState>(
                               builder: (context, state) {
                                 return ProfilePreviewPage(
                                   profile: state.profile,

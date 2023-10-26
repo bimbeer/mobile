@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'package:bimbeer/features/authentication/data/repositories/authentication_repository.dart';
 import 'package:bimbeer/features/profile/models/profile.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -8,8 +6,8 @@ import 'package:formz/formz.dart';
 import '../../profile/data/repositories/profile_repository.dart';
 import '../models/form_inputs/age.dart';
 import '../models/form_inputs/description.dart';
-import '../models/form_inputs/gender.dart';
 import '../models/form_inputs/first_name.dart';
+import '../models/form_inputs/gender.dart';
 import '../models/form_inputs/interest.dart';
 import '../models/form_inputs/last_name.dart';
 import '../models/form_inputs/username.dart';
@@ -18,11 +16,8 @@ part 'personal_info_event.dart';
 part 'personal_info_state.dart';
 
 class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
-  PersonalInfoBloc(
-      {required AuthenticaionRepository authenticationRepository,
-      required ProfileRepository profileRepository})
-      : _authenticationRepository = authenticationRepository,
-        _profileRepository = profileRepository,
+  PersonalInfoBloc({required ProfileRepository profileRepository})
+      : _profileRepository = profileRepository,
         super(const PersonalInfoState()) {
     on<PersonalInfoLoaded>(_onProfileFetched);
     on<UsernameChanged>(_onUsernameChanged);
@@ -33,13 +28,9 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
     on<DescriptionChanged>(_onDescriptionChanged);
     on<GenderChanged>(_onGenderChanged);
     on<InterestChanged>(_onInterestChanged);
-
-    _listenToProfileBloc();
   }
 
-  final AuthenticaionRepository _authenticationRepository;
   final ProfileRepository _profileRepository;
-  late final StreamSubscription _profileSubscription;
 
   void _onProfileFetched(
       PersonalInfoLoaded event, Emitter<PersonalInfoState> emit) {
@@ -130,7 +121,7 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
       return;
     }
 
-    Profile profile = _profileRepository.currentProfile.copyWith(
+    Profile profile = event.profile.copyWith(
         username: state.username.value,
         firstName: state.firstName.value,
         lastName: state.lastName.value,
@@ -140,32 +131,14 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
         interest: state.interest.value);
 
     try {
-      final userProfile = await _profileRepository
-          .get(_authenticationRepository.currentUser.id);
-      if (userProfile == Profile.empty) {
-        _profileRepository.add(
-            _authenticationRepository.currentUser.id, profile);
+      if (event.profile == Profile.empty) {
+        _profileRepository.add(event.userId, profile);
       } else {
-        _profileRepository.edit(
-            id: _authenticationRepository.currentUser.id, profile: profile);
+        _profileRepository.edit(id: event.userId, profile: profile);
       }
       emit(state.copyWith(status: FormzSubmissionStatus.success));
     } catch (e) {
       emit(state.copyWith(status: FormzSubmissionStatus.failure));
     }
-  }
-
-  void _listenToProfileBloc() {
-    _profileSubscription = _profileRepository
-        .profileStream(_authenticationRepository.currentUser.id)
-        .listen((profile) {
-      add(PersonalInfoLoaded(profile));
-    });
-  }
-
-  @override
-  Future<void> close() {
-    _profileSubscription.cancel();
-    return super.close();
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
 import '../../../core/presentation/widgets/edit_screen_title.dart';
-import '../../profile/bloc/profile_bloc.dart';
 import '../bloc/personal_info_bloc.dart';
 import 'personal_info_form.dart';
 
@@ -12,10 +11,6 @@ class PersonalInfoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context
-        .read<PersonalInfoBloc>()
-        .add(PersonalInfoLoaded(context.read<ProfileBloc>().state.profile));
-
     return const PersonalInfoView();
   }
 }

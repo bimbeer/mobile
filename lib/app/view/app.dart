@@ -15,144 +15,168 @@ import '../../features/pairs/bloc/pairs_bloc.dart';
 import '../../features/pairs/data/repositories/interactions_repository.dart';
 import '../../features/personalInfo/bloc/personal_info_bloc.dart';
 import '../../features/profile/bloc/avatar_bloc.dart';
-import '../../features/profile/bloc/profile_bloc.dart';
 import '../../features/profile/data/repositories/profile_repository.dart';
 import '../../features/profile/data/repositories/storage_repository.dart';
 import '../bloc/app_bloc.dart';
 
-class App extends StatefulWidget {
-  const App(
-      {super.key,
-      required AuthenticaionRepository authenticationRepository,
-      required ProfileRepository profileRepository,
-      required StorageRepository storageRepository,
-      required LocationRepository locationRepository,
-      required InteractionsRepository interactionsRepository,
-      required MessageRepository messageRepository})
-      : _authenticationRepository = authenticationRepository,
-        _profileRepository = profileRepository,
-        _storageRepository = storageRepository,
-        _locationRepository = locationRepository,
-        _interactionsRepository = interactionsRepository,
-        _messageRepository = messageRepository;
-
-  final AuthenticaionRepository _authenticationRepository;
-  final ProfileRepository _profileRepository;
-  final StorageRepository _storageRepository;
-  final LocationRepository _locationRepository;
-  final InteractionsRepository _interactionsRepository;
-  final MessageRepository _messageRepository;
+class App extends StatelessWidget {
+  const App({super.key});
 
   @override
-  State<App> createState() => _AppState();
+  Widget build(BuildContext context) {
+    return RepositoriesProvider();
+  }
 }
 
-class _AppState extends State<App> {
-  late final AppBloc _appBloc = AppBloc(
-    authenticationRepository: widget._authenticationRepository,
-  );
+class RepositoriesProvider extends StatelessWidget {
+  RepositoriesProvider({super.key});
 
-  late final ProfileBloc _profileBloc = ProfileBloc(
-      profileRepository: widget._profileRepository,
-      authenticationRepository: widget._authenticationRepository)
-    ..add(ProfileFetched(profile: widget._profileRepository.currentProfile));
-
-  late final PersonalInfoBloc _personalInfoBloc = PersonalInfoBloc(
-      authenticationRepository: widget._authenticationRepository,
-      profileRepository: widget._profileRepository)
-    ..add(PersonalInfoLoaded(widget._profileRepository.currentProfile));
-
-  late final _beerBloc = BeerListBloc(
-      storageRepository: widget._storageRepository,
-      profileRepository: widget._profileRepository,
-      authenticationRepository: widget._authenticationRepository)
-    ..add(BeerListFetched());
-
-  late final _navigationCubit = NavigationCubit();
-
-  late final _avatarBloc = AvatarBloc(
-      storageRepository: widget._storageRepository,
-      authenticaionRepository: widget._authenticationRepository,
-      profileRepository: widget._profileRepository);
-
-  late final _locationBloc = LocationBloc(
-    authenticationRepository: widget._authenticationRepository,
-    profileRepository: widget._profileRepository,
-    locationRepository: widget._locationRepository,
-  );
-
-  late final _pairsBloc = PairsBloc(
-    profileRepository: widget._profileRepository,
-    authenticationRepository: widget._authenticationRepository,
-    interactionsRepository: widget._interactionsRepository,
-  )..add(PairsFetched());
-
-  late final _chatBloc = ChatBloc(
-    authenticationRepository: widget._authenticationRepository,
-    profileRepository: widget._profileRepository,
-    interactionsRepository: widget._interactionsRepository,
-    messageRepository: widget._messageRepository,
-  )..add(const ChatListFetched());
-
-  late final _conversationBloc =
-      ConversationBloc(messageRepository: widget._messageRepository);
+  final authenticationRepository = AuthenticaionRepository()..user.first;
+  final profileRepository = ProfileRepository();
+  final storageRepository = StorageRepository();
+  final locationRepository = LocationRepository();
+  final interactionsRepository = InteractionsRepository();
+  final messageRepository = MessageRepository();
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider.value(value: widget._authenticationRepository),
-        RepositoryProvider.value(value: widget._profileRepository),
-        RepositoryProvider.value(value: widget._storageRepository),
+        RepositoryProvider.value(value: authenticationRepository),
+        RepositoryProvider.value(value: profileRepository),
+        RepositoryProvider.value(value: storageRepository),
+        RepositoryProvider.value(value: locationRepository),
+        RepositoryProvider.value(value: interactionsRepository),
+        RepositoryProvider.value(value: messageRepository),
       ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider.value(value: _personalInfoBloc),
-          BlocProvider.value(value: _profileBloc),
-          BlocProvider.value(value: _appBloc),
-          BlocProvider.value(value: _navigationCubit),
-          BlocProvider.value(value: _beerBloc),
-          BlocProvider.value(value: _avatarBloc),
-          BlocProvider.value(value: _locationBloc),
-          BlocProvider.value(value: _pairsBloc),
-          BlocProvider.value(value: _chatBloc),
-          BlocProvider.value(value: _conversationBloc),
-        ],
-        child: AppView(appRouter: AppRouter()),
-      ),
+      child: const AppBlocProvider(),
     );
-  }
-
-  @override
-  void dispose() {
-    _appBloc.close();
-    _profileBloc.close();
-    _personalInfoBloc.close();
-    _beerBloc.close();
-    _navigationCubit.close();
-    _avatarBloc.close();
-    _locationBloc.close();
-    _pairsBloc.close();
-    _chatBloc.close();
-    _conversationBloc.close();
-    super.dispose();
   }
 }
 
-class AppView extends StatelessWidget {
-  const AppView({super.key, required AppRouter appRouter})
-      : _appRouter = appRouter;
+class AppBlocProvider extends StatefulWidget {
+  const AppBlocProvider({super.key});
 
-  final AppRouter _appRouter;
+  @override
+  State<AppBlocProvider> createState() => _AppBlocProviderState();
+}
+
+class _AppBlocProviderState extends State<AppBlocProvider> {
+  @override
+  Widget build(BuildContext context) {
+    final appBloc = AppBloc(
+      authenticationRepository: context.read<AuthenticaionRepository>(),
+      profileRepository: context.read<ProfileRepository>(),
+    );
+
+    return BlocProvider.value(value: appBloc, child: const BlocProviders());
+  }
+}
+
+class BlocProviders extends StatelessWidget {
+  const BlocProviders({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      onGenerateRoute: _appRouter.onGenerateRoute,
-      title: 'BimBeer',
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: ThemeMode.dark,
+    final navigationCubit = NavigationCubit();
+
+    final personalInfoBloc =
+        PersonalInfoBloc(profileRepository: context.read<ProfileRepository>());
+
+    final beerBloc = BeerListBloc(
+        storageRepository: context.read<StorageRepository>(),
+        profileRepository: context.read<ProfileRepository>());
+
+    final avatarBloc = AvatarBloc(
+        storageRepository: context.read<StorageRepository>(),
+        profileRepository: context.read<ProfileRepository>());
+
+    final locationBloc = LocationBloc(
+      profileRepository: context.read<ProfileRepository>(),
+      locationRepository: context.read<LocationRepository>(),
+    );
+
+    final pairsBloc = PairsBloc(
+      profileRepository: context.read<ProfileRepository>(),
+      interactionsRepository: context.read<InteractionsRepository>(),
+    );
+
+    final chatBloc = ChatBloc(
+      profileRepository: context.read<ProfileRepository>(),
+      interactionsRepository: context.read<InteractionsRepository>(),
+      messageRepository: context.read<MessageRepository>(),
+    );
+
+    final conversationBloc =
+        ConversationBloc(messageRepository: context.read<MessageRepository>());
+
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: personalInfoBloc),
+        BlocProvider.value(value: navigationCubit),
+        BlocProvider.value(value: beerBloc),
+        BlocProvider.value(value: avatarBloc),
+        BlocProvider.value(value: locationBloc),
+        BlocProvider.value(value: pairsBloc),
+        BlocProvider.value(value: chatBloc),
+        BlocProvider.value(value: conversationBloc),
+      ],
+      child: BlocBuilder<AppBloc, AppState>(
+        buildWhen: (previous, current) => previous.user.id != current.user.id,
+        builder: (context, state) {
+          if (state.status == AppStatus.authenticated) {
+            return const AppStartupEventsDispatcher();
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    );
+  }
+}
+
+class AppStartupEventsDispatcher extends StatelessWidget {
+  const AppStartupEventsDispatcher({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    context
+        .read<PersonalInfoBloc>()
+        .add(PersonalInfoLoaded(context.read<AppBloc>().state.profile));
+    context
+        .read<LocationBloc>()
+        .add(LocationInitialized(context.read<AppBloc>().state.profile));
+    context
+        .read<BeerListBloc>()
+        .add(BeerListFetched(profile: context.read<AppBloc>().state.profile));
+    context
+        .read<PairsBloc>()
+        .add(PairsFetched(context.read<AppBloc>().state.user.id));
+    context
+        .read<ChatBloc>()
+        .add(ChatListFetched(userId: context.read<AppBloc>().state.user.id));
+
+    return AppRunner();
+  }
+}
+
+class AppRunner extends StatelessWidget {
+  AppRunner({super.key});
+
+  final AppRouter appRouter = AppRouter();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AppBloc, AppState>(
+      builder: (context, state) {
+        return MaterialApp(
+          onGenerateRoute: appRouter.onGenerateRoute,
+          title: 'BimBeer',
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: ThemeMode.dark,
+        );
+      },
     );
   }
 }

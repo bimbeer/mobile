@@ -33,13 +33,19 @@ class Profile extends Equatable {
 
   static const empty = Profile();
 
+  bool get isEmpty => this == empty;
+
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
       firstName: json['firstName'] ?? '',
       lastName: json['lastName'] ?? '',
       username: json['username'] ?? '',
       description: json['description'] ?? '',
-      age: json['age'] == null ? null : json['age'] is String ? int.parse(json['age']) : json['age'],
+      age: json['age'] == null
+          ? null
+          : json['age'] is String
+              ? int.parse(json['age'])
+              : json['age'],
       avatar: json['avatar'] ?? '',
       beers: (json['beers'] ?? [])
           .map<Beer>((beerData) => Beer.fromJson(beerData))
