@@ -30,8 +30,9 @@ class PairsView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
       body: const SafeArea(
-          child: SingleChildScrollView(
+          child: Center(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [NavBar(), PairsViewContent()],
         ),
@@ -55,66 +56,72 @@ class PairsViewContent extends StatelessWidget {
                 content: matchingProfile,
                 likeAction: () {
                   final userId = context.read<AppBloc>().state.user.id;
-                  context.read<PairsBloc>().add(PairLiked(userId: userId, matchingProfile: matchingProfile));
+                  context.read<PairsBloc>().add(PairLiked(
+                      userId: userId, matchingProfile: matchingProfile));
                 },
                 nopeAction: () {
                   final userId = context.read<AppBloc>().state.user.id;
-                  context.read<PairsBloc>().add(PairDisliked(userId: userId, matchingProfile: matchingProfile));
+                  context.read<PairsBloc>().add(PairDisliked(
+                      userId: userId, matchingProfile: matchingProfile));
                 }))
           ];
           matchEngine = MatchEngine(swipeItems: swipeItems);
 
-          return Column(
-            children: [
-              ProfileCards(
-                matchEngine: matchEngine,
-                pairs: state.matchingProfiles,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              SwipeButtons(matchEngine),
-            ],
+          return Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: ProfileCards(
+                    matchEngine: matchEngine,
+                    pairs: state.matchingProfiles,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SwipeButtons(matchEngine),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
+            ),
           );
         } else if (state is PairsLoading) {
-          return const Column(
-            children: [
-              SizedBox(
-                height: 200,
-              ),
-              CircularProgressIndicator(),
-            ],
+          return const Expanded(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         } else {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 200,
-              ),
-              Text(
-                'No matches found',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              OutlinedButton(
-                onPressed: () {
-                  final userId = context.read<AppBloc>().state.user.id;
-                  context.read<PairsBloc>().add(PairsFetched(userId));
-                },
-                style: OutlinedButton.styleFrom(
-                  fixedSize: const Size(70, 70),
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(16),
+          return Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'No matches found',
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
-                child: const Icon(
-                  Icons.refresh,
-                  size: 40,
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-            ],
+                OutlinedButton(
+                  onPressed: () {
+                    final userId = context.read<AppBloc>().state.user.id;
+                    context.read<PairsBloc>().add(PairsFetched(userId));
+                  },
+                  style: OutlinedButton.styleFrom(
+                    fixedSize: const Size(70, 70),
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(16),
+                  ),
+                  child: const Icon(
+                    Icons.refresh,
+                    size: 40,
+                  ),
+                ),
+              ],
+            ),
           );
         }
       },
@@ -136,20 +143,17 @@ class ProfileCards extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: SizedBox(
-        height: 500,
-        child: SwipeCards(
-            itemBuilder: (context, index) {
-              return BlocProvider(
-                create: (context) => ProfileCardBloc(profile: pairs[index]),
-                child: const ProfileCard(),
-              );
-            },
-            matchEngine: matchEngine,
-            onStackFinished: () {
-              context.read<PairsBloc>().add(PairsFinished());
-            }),
-      ),
+      child: SwipeCards(
+          itemBuilder: (context, index) {
+            return BlocProvider(
+              create: (context) => ProfileCardBloc(profile: pairs[index]),
+              child: const ProfileCard(),
+            );
+          },
+          matchEngine: matchEngine,
+          onStackFinished: () {
+            context.read<PairsBloc>().add(PairsFinished());
+          }),
     );
   }
 }
