@@ -130,13 +130,41 @@ class ConversationHeader extends StatelessWidget {
             color: Colors.grey,
           ),
         ),
-        getAvatar(),
-        const SizedBox(
-          width: 10,
-        ),
-        Text(
-          username,
-          style: Theme.of(context).textTheme.titleLarge,
+        GestureDetector(
+          onTap: () async {
+            final chatState = context.read<ChatBloc>().state;
+            final conversationState = context.read<ConversationBloc>().state;
+
+            if (chatState is ChatListLoaded &&
+                conversationState is ConversationLoaded) {
+              final profile = chatState
+                  .chatDetails[conversationState.chatIndex].pairProfile;
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => BlocBuilder<AppBloc, AppState>(
+                          builder: (context, state) {
+                            return ProfilePreviewPage(
+                              profile: profile,
+                            );
+                          },
+                        )),
+              );
+            }
+          },
+          child: Row(
+            children: [
+              getAvatar(),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(
+                username,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ],
+          ),
         ),
       ],
     );
