@@ -69,7 +69,8 @@ class ChatList extends StatelessWidget {
 }
 
 class ChatPreviewTile extends StatelessWidget {
-  const ChatPreviewTile({required this.chatIndex, required this.chatDetails, super.key});
+  const ChatPreviewTile(
+      {required this.chatIndex, required this.chatDetails, super.key});
 
   final int chatIndex;
   final ChatDetails chatDetails;
@@ -77,16 +78,16 @@ class ChatPreviewTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: chatDetails.chatPreview.avatarUrl == ""
+      leading: chatDetails.pairProfile.avatar == ""
           ? const CircleAvatar(
               child: Icon(
                 Icons.person,
               ),
             )
           : CircleAvatar(
-              backgroundImage: NetworkImage(chatDetails.chatPreview.avatarUrl),
+              backgroundImage: NetworkImage(chatDetails.pairProfile.avatar!),
             ),
-      title: Text(chatDetails.chatPreview.name),
+      title: Text(chatDetails.pairProfile.username!),
       subtitle: Text(
           chatDetails.messages.isEmpty ? "" : chatDetails.messages.last.text),
       onTap: () {

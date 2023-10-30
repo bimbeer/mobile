@@ -1,6 +1,5 @@
 import 'package:bimbeer/features/chat/data/repositories/message_repository.dart';
 import 'package:bimbeer/features/chat/models/chat_details.dart';
-import 'package:bimbeer/features/chat/models/chat_preview.dart';
 import 'package:bimbeer/features/chat/models/message.dart';
 import 'package:bimbeer/features/pairs/data/repositories/interactions_repository.dart';
 import 'package:bimbeer/features/profile/data/repositories/profile_repository.dart';
@@ -38,12 +37,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     final chatDetails = <ChatDetails>[];
     for (var interaction in interactions) {
       if (interaction.reactionType == 'like') {
+        // TODO: require both sided like interaction
         final pairId = interaction.sender == userId
             ? interaction.recipient
             : interaction.sender;
 
-        if (chatDetails
-            .any((element) => element.chatPreview.pairId == pairId)) {
+        if (chatDetails.any((element) => element.pairUserId == pairId)) {
           continue;
         }
 
@@ -57,14 +56,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
         final pairProfile = await _profileRepository.get(pairId);
 
-        final chatPreview = ChatPreview(
-            pairId: pairId,
-            name: pairProfile.username!,
-            avatarUrl: pairProfile.avatar!);
-
         final detailedChat = ChatDetails(
+          pairUserId: pairId,
           messages: messages,
-          chatPreview: chatPreview,
+          pairProfile: pairProfile,
         );
 
         chatDetails.add(detailedChat);
@@ -82,7 +77,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   // TODO: add new chat details when new interaction is added
   void _subscribeToMessages(String userId, List<ChatDetails> chatDetails) {
     for (var detailedChat in chatDetails) {
-      final pairId = detailedChat.chatPreview.pairId;
+      final pairId = detailedChat.pairUserId;
 
       Timestamp? lastMessageTimestamp = detailedChat.messages.isNotEmpty
           ? detailedChat.messages.last.timestamp

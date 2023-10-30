@@ -1,23 +1,26 @@
-import 'package:bimbeer/features/chat/models/chat_preview.dart';
 import 'package:bimbeer/features/chat/models/message.dart';
+import 'package:bimbeer/features/profile/models/profile.dart';
 import 'package:equatable/equatable.dart';
 
 class ChatDetails extends Equatable {
-  final ChatPreview chatPreview;
+  final String pairUserId;
+  final Profile pairProfile;
   final List<Message> messages;
 
-  const ChatDetails({required this.messages, required this.chatPreview});
+  const ChatDetails({required this.pairUserId, required this.messages, required this.pairProfile});
 
   ChatDetails copyWith({
+    String? pairUserId,
+    Profile? pairProfile,
     List<Message>? messages,
-    ChatPreview? chatPreview,
   }) {
     return ChatDetails(
+      pairUserId: pairUserId ?? this.pairUserId,
       messages: messages ?? this.messages,
-      chatPreview: chatPreview ?? this.chatPreview,
+      pairProfile: pairProfile ?? this.pairProfile,
     );
   }
 
   @override
-  List<Object?> get props => [messages, chatPreview];
+  List<Object?> get props => [messages, pairProfile, pairUserId];
 }

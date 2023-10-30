@@ -4,6 +4,7 @@ import 'package:bimbeer/features/chat/bloc/chat_bloc.dart';
 import 'package:bimbeer/features/chat/bloc/conversation_bloc.dart';
 import 'package:bimbeer/features/chat/models/chat_details.dart';
 import 'package:bimbeer/features/chat/models/message.dart';
+import 'package:bimbeer/features/pairs/view/profile_preview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -75,8 +76,8 @@ class ConversationView extends StatelessWidget {
         children: [
           SizedBox(
             child: ConversationHeader(
-              avatarUrl: chatDetails.chatPreview.avatarUrl,
-              username: chatDetails.chatPreview.name,
+              avatarUrl: chatDetails.pairProfile.avatar!,
+              username: chatDetails.pairProfile.username!,
             ),
           ),
           Expanded(
@@ -182,9 +183,7 @@ class ConversationMessage extends StatelessWidget {
       alignment:
           message.senderId == userId ? Alignment.topRight : Alignment.topLeft,
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.8,
-        alignment: Alignment.topLeft,
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(6),
         margin: const EdgeInsets.all(4),
         decoration: BoxDecoration(
           color: message.senderId == userId
@@ -248,8 +247,7 @@ class _ConversationControlsState extends State<ConversationControls> {
                           text: messageInputController.text,
                           recipientId: chatState
                               .chatDetails[conversationState.chatIndex]
-                              .chatPreview
-                              .pairId,
+                              .pairUserId,
                           userId: userId),
                     );
                 messageInputController.clear();
