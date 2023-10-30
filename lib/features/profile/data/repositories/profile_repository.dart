@@ -29,7 +29,7 @@ class ProfileRepository {
     final snapshot = await docRef.get();
     if (snapshot.exists) {
       return Profile.fromJson(snapshot.data()!);
-    } 
+    }
     return Profile.empty;
   }
 
@@ -69,24 +69,24 @@ class ProfileRepository {
     for (final querySnapshot in querySnapshots) {
       for (final document in querySnapshot.docs) {
         final potentialMatchId = document.id;
-        final matchingProfile = MatchingProfile(
-            potentialMatchId, Profile.fromJson(document.data()));
-
-        final currentInteractions = await _db
-            .collection('interactions')
-            .where('sender', isEqualTo: id)
-            .where('recipient', isEqualTo: potentialMatchId)
-            .get();
-        if (currentInteractions.docs.isNotEmpty) continue;
-
-        final currentReverseInteractions = await _db
-            .collection('interactions')
-            .where('recipient', isEqualTo: id)
-            .where('sender', isEqualTo: potentialMatchId)
-            .get();
-        if (currentReverseInteractions.docs.isNotEmpty) continue;
-
         if (potentialMatchId != id) {
+          final currentUserInteractions = await _db
+              .collection('interactions')
+              .where('sender', isEqualTo: id)
+              .where('recipient', isEqualTo: potentialMatchId)
+              .get();
+          if (currentUserInteractions.docs.isNotEmpty) continue;
+
+          final poternatialMatchUserNegativeInteractions = await _db
+              .collection('interactions')
+              .where('recipient', isEqualTo: id)
+              .where('sender', isEqualTo: potentialMatchId)
+              .where('reactionType', isNotEqualTo: 'like')
+              .get();
+          if (poternatialMatchUserNegativeInteractions.docs.isNotEmpty) continue;
+
+          final matchingProfile = MatchingProfile(
+              potentialMatchId, Profile.fromJson(document.data()));
           if (_isMatch(profile, matchingProfile.profile)) {
             matchedProfiles.add(matchingProfile);
           }
