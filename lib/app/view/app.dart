@@ -121,16 +121,7 @@ class BlocProviders extends StatelessWidget {
         BlocProvider.value(value: chatBloc),
         BlocProvider.value(value: conversationBloc),
       ],
-      child: BlocBuilder<AppBloc, AppState>(
-        buildWhen: (previous, current) => previous.user.id != current.user.id,
-        builder: (context, state) {
-          if (state.status == AppStatus.authenticated) {
-            return const AppStartupEventsDispatcher();
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
+      child: const AppStartupEventsDispatcher(),
     );
   }
 }
@@ -140,23 +131,24 @@ class AppStartupEventsDispatcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context
-        .read<PersonalInfoBloc>()
-        .add(PersonalInfoLoaded(context.read<AppBloc>().state.profile));
-    context
-        .read<LocationBloc>()
-        .add(LocationInitialized(context.read<AppBloc>().state.profile));
-    context
-        .read<BeerListBloc>()
-        .add(BeerListFetched(profile: context.read<AppBloc>().state.profile));
-    context
-        .read<PairsBloc>()
-        .add(PairsFetched(context.read<AppBloc>().state.user.id));
-    context
-        .read<ChatBloc>()
-        .add(ChatListFetched(userId: context.read<AppBloc>().state.user.id));
-
-    return AppRunner();
+    return BlocBuilder<AppBloc, AppState>(builder: (context, state) {
+      if (state.status == AppStatus.authenticated) {
+        context
+            .read<PersonalInfoBloc>()
+            .add(PersonalInfoLoaded(context.read<AppBloc>().state.profile));
+        context
+            .read<LocationBloc>()
+            .add(LocationInitialized(context.read<AppBloc>().state.profile));
+        context.read<BeerListBloc>().add(
+            BeerListFetched(profile: context.read<AppBloc>().state.profile));
+        context
+            .read<PairsBloc>()
+            .add(PairsFetched(context.read<AppBloc>().state.user.id));
+        context.read<ChatBloc>().add(
+            ChatListFetched(userId: context.read<AppBloc>().state.user.id));
+      }
+      return AppRunner();
+    });
   }
 }
 
