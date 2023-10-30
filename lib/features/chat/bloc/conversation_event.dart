@@ -8,12 +8,12 @@ sealed class ConversationEvent extends Equatable {
 }
 
 class ConversationEntered extends ConversationEvent {
-  const ConversationEntered({required this.chatDetails});
+  const ConversationEntered({required this.chatIndex});
 
-  final ChatDetails chatDetails;
+  final int chatIndex;
 
   @override
-  List<Object> get props => [chatDetails];
+  List<Object> get props => [chatIndex];
 }
 
 class ConversationLeft extends ConversationEvent {
@@ -24,10 +24,17 @@ class ConversationLeft extends ConversationEvent {
 }
 
 class MessageSent extends ConversationEvent {
-  const MessageSent({required this.message});
+  const MessageSent(
+      {required this.chatIndex,
+      required this.text,
+      required this.recipientId,
+      required this.userId});
 
-  final Message message;
+  final int chatIndex;
+  final String text;
+  final String recipientId;
+  final String userId;
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [chatIndex, text, recipientId, userId];
 }

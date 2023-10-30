@@ -10,12 +10,12 @@ sealed class ConversationState extends Equatable {
 final class ConversationInitial extends ConversationState {}
 
 final class ConversationLoaded extends ConversationState {
-  const ConversationLoaded({required this.chatDetails});
+  const ConversationLoaded({required this.chatIndex});
 
-  final ChatDetails chatDetails;
+  final int chatIndex;
 
   @override
-  List<Object> get props => [chatDetails];
+  List<Object> get props => [chatIndex];
 }
 
 final class ConversationLoading extends ConversationState {

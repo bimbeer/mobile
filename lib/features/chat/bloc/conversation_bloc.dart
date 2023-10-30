@@ -1,7 +1,7 @@
 import 'package:bimbeer/features/chat/data/repositories/message_repository.dart';
-import 'package:bimbeer/features/chat/models/chat_details.dart';
 import 'package:bimbeer/features/chat/models/message.dart';
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 part 'conversation_event.dart';
@@ -19,7 +19,7 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
 
   void _onChatRoomEntered(
       ConversationEntered event, Emitter<ConversationState> emit) {
-    emit(ConversationLoaded(chatDetails: event.chatDetails));
+    emit(ConversationLoaded(chatIndex: event.chatIndex));
   }
 
   void _onChatRoomExit(
@@ -28,12 +28,15 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
   }
 
   void _onMessageSent(MessageSent event, Emitter<ConversationState> emit) {
-    final chatDetails = (state as ConversationLoaded).chatDetails;
-    final updatedChatDetails = chatDetails.copyWith(
-      messages: [...chatDetails.messages, event.message],
-    );
+    emit(const ConversationLoading());
+    final message = Message(
+        recipientId: event.recipientId,
+        senderId: event.userId,
+        text: event.text,
+        timestamp: Timestamp.now(),
+        status: 'sent');
 
-    _messageRepository.addMessage(event.message);
-    emit(ConversationLoaded(chatDetails: updatedChatDetails));
+    _messageRepository.addMessage(message);
+    emit(ConversationLoaded(chatIndex: event.chatIndex));
   }
 }

@@ -4,7 +4,6 @@ import 'package:bimbeer/features/chat/bloc/chat_bloc.dart';
 import 'package:bimbeer/features/chat/bloc/conversation_bloc.dart';
 import 'package:bimbeer/features/chat/models/chat_details.dart';
 import 'package:bimbeer/features/chat/models/message.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,13 +12,34 @@ class ConversationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chatState = context.watch<ConversationBloc>().state;
-
-    if (chatState is ConversationLoaded) {
-      return ConversationView(chatDetails: chatState.chatDetails);
-    } else {
-      return const ConversationLoadingView();
+    int? getChatIndex() {
+      final conversationState = context.read<ConversationBloc>().state;
+      if (conversationState is ConversationLoaded) {
+        return conversationState.chatIndex;
+      }
+      return null;
     }
+
+    return BlocBuilder<ChatBloc, ChatState>(
+      buildWhen: (previous, current) {
+        final chatIndex = getChatIndex();
+        if (previous is ChatListLoaded &&
+            current is ChatListLoaded &&
+            chatIndex != null) {
+          return previous.chatDetails[chatIndex].messages !=
+              current.chatDetails[chatIndex].messages;
+        }
+        return false;
+      },
+      builder: (context, state) {
+        final chatIndex = getChatIndex();
+        if (state is ChatListLoaded && chatIndex != null) {
+          return ConversationView(chatDetails: state.chatDetails[chatIndex]);
+        } else {
+          return const ConversationLoadingView();
+        }
+      },
+    );
   }
 }
 
@@ -197,8 +217,6 @@ class _ConversationControlsState extends State<ConversationControls> {
 
   @override
   Widget build(BuildContext context) {
-    var userId = context.read<AppBloc>().state.user.id;
-
     return Container(
       margin: const EdgeInsets.all(10),
       height: 50,
@@ -218,18 +236,24 @@ class _ConversationControlsState extends State<ConversationControls> {
           ),
           IconButton(
             onPressed: () {
-              context.read<ConversationBloc>().add(
-                    MessageSent(
-                      message: Message(
-                        recipientId: widget.chatDetails.chatPreview.pairId,
-                        senderId: userId,
-                        text: messageInputController.text,
-                        status: 'sent',
-                        timestamp: Timestamp.now(),
-                      ),
-                    ),
-                  );
-              messageInputController.clear();
+              final chatState = context.read<ChatBloc>().state;
+              final conversationState = context.read<ConversationBloc>().state;
+              final userId = context.read<AppBloc>().state.user.id;
+
+              if (chatState is ChatListLoaded &&
+                  conversationState is ConversationLoaded) {
+                context.read<ConversationBloc>().add(
+                      MessageSent(
+                          chatIndex: conversationState.chatIndex,
+                          text: messageInputController.text,
+                          recipientId: chatState
+                              .chatDetails[conversationState.chatIndex]
+                              .chatPreview
+                              .pairId,
+                          userId: userId),
+                    );
+                messageInputController.clear();
+              }
             },
             icon: const Icon(Icons.send),
           ),

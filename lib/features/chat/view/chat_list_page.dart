@@ -62,20 +62,20 @@ class ChatList extends StatelessWidget {
     return ListView.builder(
         itemCount: chatDetailsList.length,
         itemBuilder: (context, index) => ChatPreviewTile(
+              chatIndex: index,
               chatDetails: chatDetailsList[index],
             ));
   }
 }
 
 class ChatPreviewTile extends StatelessWidget {
-  const ChatPreviewTile({required this.chatDetails, super.key});
+  const ChatPreviewTile({required this.chatIndex, required this.chatDetails, super.key});
 
+  final int chatIndex;
   final ChatDetails chatDetails;
 
   @override
   Widget build(BuildContext context) {
-    context.watch<ChatBloc>().state;
-
     return ListTile(
       leading: chatDetails.chatPreview.avatarUrl == ""
           ? const CircleAvatar(
@@ -92,7 +92,7 @@ class ChatPreviewTile extends StatelessWidget {
       onTap: () {
         context
             .read<ConversationBloc>()
-            .add(ConversationEntered(chatDetails: chatDetails));
+            .add(ConversationEntered(chatIndex: chatIndex));
         Navigator.of(context).pushNamed(AppRoute.chatPage);
       },
     );
