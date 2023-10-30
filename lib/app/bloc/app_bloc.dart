@@ -30,15 +30,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   final AuthenticaionRepository _authenticationRepository;
   final ProfileRepository _profileRepository;
   late final StreamSubscription<User> _userSubscription;
-  late final StreamSubscription<Profile> _profileSubscription;
 
   void _onUserChanged(_AppUserChanged event, Emitter<AppState> emit) async {
     final user = event.user;
     if (!user.isEmpty) {
-      final profile = await _profileRepository.get(user.id);
+      var profile = await _getUserProfile(user.id);
       emit(AppState.authenticated(event.user, profile));
-      _profileSubscription =
-          _profileRepository.profileStream(user.id).listen((profile) {
+      _profileRepository.profileStream(user.id).listen((profile) {
         add(_AppUserProfileChanged(profile));
       });
     } else {
@@ -55,10 +53,18 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     unawaited(_authenticationRepository.logOut());
   }
 
+  Future<Profile> _getUserProfile(String userId) async {
+    var profile = await _profileRepository.get(userId);
+    if (profile.isEmpty) {
+      await _profileRepository.add(userId, Profile.empty);
+      profile = await _profileRepository.get(userId);
+    }
+    return profile;
+  }
+
   @override
   Future<void> close() {
     _userSubscription.cancel();
-    _profileSubscription.cancel();
     return super.close();
   }
 }
