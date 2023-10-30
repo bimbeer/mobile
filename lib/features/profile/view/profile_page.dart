@@ -24,72 +24,85 @@ class ProfileView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
       body: SafeArea(
-          child: SingleChildScrollView(
-        child: Column(children: [
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
           const NavBar(),
-          const Avatar(),
           const SizedBox(
             height: 20,
           ),
-          BlocBuilder<AppBloc, AppState>(
-            buildWhen: (previous, current) {
-              return previous.profile.username != current.profile.username ||
-                  previous.profile.age != current.profile.age;
-            },
-            builder: (context, state) {
-              String? name = state.profile.username;
-              int? age = state.profile.age;
+          Expanded(
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+              const Avatar(),
+              const SizedBox(
+                height: 20,
+              ),
+              BlocBuilder<AppBloc, AppState>(
+                buildWhen: (previous, current) {
+                  return previous.profile.username !=
+                          current.profile.username ||
+                      previous.profile.age != current.profile.age;
+                },
+                builder: (context, state) {
+                  String? name = state.profile.username;
+                  int? age = state.profile.age;
 
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => BlocBuilder<AppBloc, AppState>(
-                              builder: (context, state) {
-                                return ProfilePreviewPage(
-                                  profile: state.profile,
-                                );
-                              },
-                            )),
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                BlocBuilder<AppBloc, AppState>(
+                                  builder: (context, state) {
+                                    return ProfilePreviewPage(
+                                      profile: state.profile,
+                                    );
+                                  },
+                                )),
+                      );
+                    },
+                    child: Text(
+                      '$name, $age',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                   );
                 },
-                child: Text(
-                  '$name, $age',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              );
-            },
-          ),
-          const SizedBox(
-            height: 40,
-          ),
-          GridView.count(
-            padding: const EdgeInsets.symmetric(horizontal: 100),
-            crossAxisSpacing: 20,
-            mainAxisSpacing: 30,
-            shrinkWrap: true,
-            crossAxisCount: 2,
-            children: const [
-              ButtonTile(
-                label: 'Profile',
-                icon: Icons.edit,
-                route: AppRoute.editProfile,
               ),
-              ButtonTile(
-                  label: 'Distance', icon: Icons.map, route: AppRoute.location),
-              ButtonTile(
-                label: 'Settings',
-                icon: Icons.settings,
-                route: AppRoute.settings,
+              const SizedBox(
+                height: 40,
               ),
-              ButtonTile(
-                  label: 'Beers',
-                  icon: Icons.wine_bar,
-                  route: AppRoute.pickBeer),
-            ],
+              GridView.count(
+                padding: const EdgeInsets.symmetric(horizontal: 100),
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 30,
+                shrinkWrap: true,
+                crossAxisCount: 2,
+                children: const [
+                  ButtonTile(
+                    label: 'Profile',
+                    icon: Icons.edit,
+                    route: AppRoute.editProfile,
+                  ),
+                  ButtonTile(
+                      label: 'Distance',
+                      icon: Icons.map,
+                      route: AppRoute.location),
+                  ButtonTile(
+                    label: 'Settings',
+                    icon: Icons.settings,
+                    route: AppRoute.settings,
+                  ),
+                  ButtonTile(
+                      label: 'Beers',
+                      icon: Icons.wine_bar,
+                      route: AppRoute.pickBeer),
+                ],
+              ),
+            ]),
           ),
-        ]),
+        ],
       )),
     );
   }
