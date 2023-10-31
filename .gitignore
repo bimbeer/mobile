@@ -4,6 +4,10 @@
 *.log
 *.pyc
 *.swp
+linux/
+macos/
+windows/
+web/
 .DS_Store
 .atom/
 .buildlog/
