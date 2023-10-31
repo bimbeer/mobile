@@ -21,8 +21,8 @@ class SignUpForm extends StatelessWidget {
         BlocListener<SignUpCubit, SignUpState>(
           listener: (context, state) {
             if (state.status.isSuccess) {
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil(AppRoute.profile, (route) => false);
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  AppRoute.createProfile, (route) => false);
             } else if (state.status.isFailure) {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
