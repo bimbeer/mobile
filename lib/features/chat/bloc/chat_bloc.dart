@@ -2,9 +2,11 @@ import 'package:bimbeer/features/chat/data/repositories/message_repository.dart'
 import 'package:bimbeer/features/chat/models/chat_details.dart';
 import 'package:bimbeer/features/chat/models/message.dart';
 import 'package:bimbeer/features/pairs/data/repositories/interactions_repository.dart';
+import 'package:bimbeer/features/pairs/models/interaction.dart';
 import 'package:bimbeer/features/profile/data/repositories/profile_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 
 part 'chat_event.dart';
@@ -33,37 +35,58 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     final userId = event.userId;
     final interactions =
         await _interactionsRepository.getAllInteractionsForUser(userId);
+    final checkedInteractions = List<Interaction>.empty(growable: true);
 
     final chatDetails = <ChatDetails>[];
     for (var interaction in interactions) {
-      if (interaction.reactionType == 'like') {
-        // TODO: require both sided like interaction
-        final pairId = interaction.sender == userId
-            ? interaction.recipient
-            : interaction.sender;
-
-        if (chatDetails.any((element) => element.pairUserId == pairId)) {
-          continue;
-        }
-
-        final messagesFromUser =
-            await _messageRepository.getMessages(userId, pairId);
-        final messagesFromPair =
-            await _messageRepository.getMessages(pairId, userId);
-
-        final messages = [...messagesFromUser, ...messagesFromPair];
-        messages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
-
-        final pairProfile = await _profileRepository.get(pairId);
-
-        final detailedChat = ChatDetails(
-          pairUserId: pairId,
-          messages: messages,
-          pairProfile: pairProfile,
-        );
-
-        chatDetails.add(detailedChat);
+      if (interaction.reactionType != 'like' ||
+          checkedInteractions.contains(interaction)) {
+        continue;
       }
+
+      final userIsSender = interaction.sender == userId;
+      final pairId = userIsSender ? interaction.recipient : interaction.sender;
+
+      Interaction? counterInteraction;
+      if (userIsSender) {
+        counterInteraction = interactions
+            .firstWhereOrNull((interaction) => interaction.sender == pairId && interaction.recipient == userId);
+      } else {
+        counterInteraction = interactions
+            .firstWhereOrNull((interaction) => interaction.recipient == pairId && interaction.sender == userId);
+      }
+
+      if (counterInteraction == null || checkedInteractions.contains(counterInteraction)) {
+        checkedInteractions.add(interaction);
+        continue;
+      }
+      else if (counterInteraction.reactionType != 'like') {
+        checkedInteractions.add(interaction);
+        checkedInteractions.add(counterInteraction);
+        continue;
+      }
+
+      if (chatDetails.any((element) => element.pairUserId == pairId)) {
+        continue;
+      }
+
+      final messagesFromUser =
+          await _messageRepository.getMessages(userId, pairId);
+      final messagesFromPair =
+          await _messageRepository.getMessages(pairId, userId);
+
+      final messages = [...messagesFromUser, ...messagesFromPair];
+      messages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+      final pairProfile = await _profileRepository.get(pairId);
+
+      final detailedChat = ChatDetails(
+        pairUserId: pairId,
+        messages: messages,
+        pairProfile: pairProfile,
+      );
+
+      chatDetails.add(detailedChat);
     }
     emit(ChatListLoaded(chatDetails: chatDetails));
     _subscribeToMessages(event.userId, chatDetails);
