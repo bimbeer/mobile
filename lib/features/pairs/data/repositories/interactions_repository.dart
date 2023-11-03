@@ -32,6 +32,17 @@ class InteractionsRepository {
         .toList();
   }
 
+  Stream<List<Interaction>> streamGetAllInteractionsForUser(String userId) {
+    return _db
+        .collection('interactions')
+        .where(Filter.or(Filter('sender', isEqualTo: userId),
+            Filter('recipient', isEqualTo: userId)))
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => Interaction.fromJson(doc.data()))
+            .toList());
+  }
+
   Stream<List<Interaction>> getInteractionsByRecipient(String recipientId) {
     return _db
         .collection('interactions')

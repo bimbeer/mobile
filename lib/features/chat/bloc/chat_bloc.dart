@@ -49,18 +49,18 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
       Interaction? counterInteraction;
       if (userIsSender) {
-        counterInteraction = interactions
-            .firstWhereOrNull((interaction) => interaction.sender == pairId && interaction.recipient == userId);
+        counterInteraction = interactions.firstWhereOrNull((interaction) =>
+            interaction.sender == pairId && interaction.recipient == userId);
       } else {
-        counterInteraction = interactions
-            .firstWhereOrNull((interaction) => interaction.recipient == pairId && interaction.sender == userId);
+        counterInteraction = interactions.firstWhereOrNull((interaction) =>
+            interaction.recipient == pairId && interaction.sender == userId);
       }
 
-      if (counterInteraction == null || checkedInteractions.contains(counterInteraction)) {
+      if (counterInteraction == null ||
+          checkedInteractions.contains(counterInteraction)) {
         checkedInteractions.add(interaction);
         continue;
-      }
-      else if (counterInteraction.reactionType != 'like') {
+      } else if (counterInteraction.reactionType != 'like') {
         checkedInteractions.add(interaction);
         checkedInteractions.add(counterInteraction);
         continue;
@@ -89,6 +89,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       chatDetails.add(detailedChat);
     }
     emit(ChatListLoaded(chatDetails: chatDetails));
+    _subscribeToInteractions(event.userId, chatDetails);
     _subscribeToMessages(event.userId, chatDetails);
   }
 
@@ -97,7 +98,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(ChatListLoaded(chatDetails: event.chatDetails));
   }
 
-  // TODO: add new chat details when new interaction is added
   void _subscribeToMessages(String userId, List<ChatDetails> chatDetails) {
     for (var detailedChat in chatDetails) {
       final pairId = detailedChat.pairUserId;
@@ -126,6 +126,57 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         }
       });
     }
+  }
+
+  void _subscribeToInteractions(String userId, List<ChatDetails> chatDetails) {
+    _interactionsRepository
+        .streamGetAllInteractionsForUser(userId)
+        .listen((interactions) async {
+      if (interactions.isNotEmpty) {
+        final newInteraction = interactions.last;
+        if (newInteraction.reactionType == 'like') {
+          final userIsSender = newInteraction.sender == userId;
+          final counterInteraction = interactions.firstWhereOrNull(
+              (interaction) =>
+                  interaction.sender == newInteraction.recipient &&
+                  interaction.recipient == newInteraction.sender);
+          if (counterInteraction != null &&
+              counterInteraction.reactionType == 'like') {
+            final pairId =
+                userIsSender ? newInteraction.recipient : newInteraction.sender;
+            if (!chatDetails.any((element) => element.pairUserId == pairId)) {
+              final pairProfile = await _profileRepository.get(pairId);
+              final detailedChat = ChatDetails(
+                  pairUserId: pairId,
+                  messages: List<Message>.empty(growable: true),
+                  pairProfile: pairProfile);
+              chatDetails = [...chatDetails, detailedChat];
+              add(ChatListUpdated(chatDetails: chatDetails));
+
+              final sentByUser =
+                  _messageRepository.messagesStream(userId, pairId);
+
+              sentByUser.listen((messages) {
+                if (messages.isNotEmpty) {
+                  _handleDetailedChatUpdate(messages, detailedChat);
+                  add(ChatListUpdated(chatDetails: chatDetails));
+                }
+              });
+
+              final receivedByUser =
+                  _messageRepository.messagesStream(pairId, userId);
+
+              receivedByUser.listen((messages) {
+                if (messages.isNotEmpty) {
+                  _handleDetailedChatUpdate(messages, detailedChat);
+                  add(ChatListUpdated(chatDetails: chatDetails));
+                }
+              });
+            }
+          }
+        }
+      }
+    });
   }
 
   void _handleDetailedChatUpdate(
