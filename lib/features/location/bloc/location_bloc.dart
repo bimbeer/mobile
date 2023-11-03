@@ -40,20 +40,20 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   void _onLocationInitialized(
       LocationInitialized event, Emitter<LocationState> emit) {
-    final location = LocationInput.dirty(event.profile.location!.label);
+    final location = LocationInput.dirty(event.profile.location!.label ?? '');
     final range = event.profile.range;
     emit(state.copyWith(
         locationInput: location, range: range, fetchedCities: [], city: null));
   }
 
   void _onLocationLoaded(LocationLoaded event, Emitter<LocationState> emit) {
-    final location = LocationInput.dirty(event.profile.location!.label);
+    final location = LocationInput.dirty(event.profile.location?.label ?? '');
     final range = event.profile.range;
     emit(state.copyWith(locationInput: location, range: range));
   }
 
   void _onLocationUpdated(LocationUpdated event, Emitter<LocationState> emit) {
-    final location = LocationInput.dirty(event.city.address.label);
+    final location = LocationInput.dirty(event.city.address.label ?? '');
     emit(state.copyWith(
       locationInput: location,
       city: event.city,

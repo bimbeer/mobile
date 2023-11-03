@@ -19,13 +19,13 @@ class GeocodeCity {
 }
 
 class GeocodeAddress {
-  final String label;
-  final String countryCode;
-  final String countryName;
-  final String state;
-  final String county;
-  final String city;
-  final String postalCode;
+  final String? label;
+  final String? countryCode;
+  final String? countryName;
+  final String? state;
+  final String? county;
+  final String? city;
+  final String? postalCode;
 
   GeocodeAddress({
     required this.label,

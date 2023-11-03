@@ -160,7 +160,7 @@ class Beer extends Equatable {
 }
 
 class Location extends Equatable {
-  final String label;
+  final String? label;
   final Position? position;
 
   const Location({
