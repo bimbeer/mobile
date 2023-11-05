@@ -28,6 +28,7 @@ class _ProfileFirstSetupView extends StatefulWidget {
 
 class _ProfileFirstSetupViewState extends State<_ProfileFirstSetupView> {
   int _step = 0;
+  int _futureStep = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -42,19 +43,14 @@ class _ProfileFirstSetupViewState extends State<_ProfileFirstSetupView> {
               beerListBlocState.status == BeerListStatus.loading;
 
       int getCurrentStep() {
-        if (_step == ProfileFirstSetupStep.location.index) {
-          if (personalInfoState.status == FormzSubmissionStatus.success) {
-            return _step;
-          }
-          return _step - 1;
-        } else if (_step == ProfileFirstSetupStep.beers.index) {
-          if (locationState.status == FormzSubmissionStatus.success) {
-            return _step;
-          }
-          return _step - 1;
-        } else {
-          return _step;
+        if (_futureStep == ProfileFirstSetupStep.location.index &&
+            personalInfoState.status == FormzSubmissionStatus.success) {
+          _step = _futureStep;
+        } else if (_futureStep == ProfileFirstSetupStep.beers.index &&
+            locationState.status == FormzSubmissionStatus.success) {
+          _step = _futureStep;
         }
+        return _step;
       }
 
       return Scaffold(
@@ -75,25 +71,23 @@ class _ProfileFirstSetupViewState extends State<_ProfileFirstSetupView> {
                   setState(() {
                     if (_step > 0) {
                       _step -= 1;
+                      _futureStep = _step;
                     }
                   });
                 },
                 onStepContinue: () {
                   final userId = context.read<AppBloc>().state.user.id;
                   final profile = context.read<AppBloc>().state.profile;
-                  if (_step ==
-                      ProfileFirstSetupStep.personalInfo.index) {
+                  if (_step == ProfileFirstSetupStep.personalInfo.index) {
                     context
                         .read<PersonalInfoBloc>()
                         .add(FormSubmitted(userId: userId, profile: profile));
-                    setState(() => _step += 1);
-                  } else if (_step ==
-                      ProfileFirstSetupStep.location.index) {
+                    setState(() => _futureStep = ProfileFirstSetupStep.location.index);
+                  } else if (_step == ProfileFirstSetupStep.location.index) {
                     context.read<LocationBloc>().add(LocationFormSubmitted(
                         userId: userId, profile: profile));
-                    setState(() => _step += 1);
-                  } else if (_step ==
-                      ProfileFirstSetupStep.beers.index) {
+                    setState(() => _futureStep =  ProfileFirstSetupStep.beers.index);
+                  } else if (_step == ProfileFirstSetupStep.beers.index) {
                     if (beerListBlocState.beers.isNotEmpty) {
                       Navigator.of(context).pushNamedAndRemoveUntil(
                           AppRoute.profile, (route) => false);
@@ -102,18 +96,15 @@ class _ProfileFirstSetupViewState extends State<_ProfileFirstSetupView> {
                 },
                 steps: <Step>[
                   Step(
-                    isActive: _step >=
-                        ProfileFirstSetupStep.personalInfo.index,
-                    state: _step <=
-                            ProfileFirstSetupStep.personalInfo.index
+                    isActive: _step >= ProfileFirstSetupStep.personalInfo.index,
+                    state: _step <= ProfileFirstSetupStep.personalInfo.index
                         ? StepState.editing
                         : StepState.complete,
                     title: const Text('Personal Information'),
                     content: const PersonalInfoFormInputs(),
                   ),
                   Step(
-                    isActive:
-                        _step >= ProfileFirstSetupStep.location.index,
+                    isActive: _step >= ProfileFirstSetupStep.location.index,
                     state: _step <= ProfileFirstSetupStep.location.index
                         ? StepState.editing
                         : StepState.complete,
@@ -121,8 +112,7 @@ class _ProfileFirstSetupViewState extends State<_ProfileFirstSetupView> {
                     content: const LocationFormInputs(),
                   ),
                   Step(
-                    isActive:
-                        _step >= ProfileFirstSetupStep.beers.index,
+                    isActive: _step >= ProfileFirstSetupStep.beers.index,
                     state: StepState.complete,
                     title: const Text('Beers'),
                     content: const SingleChildScrollView(child: BeerTiles()),

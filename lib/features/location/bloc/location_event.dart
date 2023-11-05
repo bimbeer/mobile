@@ -13,15 +13,6 @@ class LocationInitialized extends LocationEvent {
   List<Object> get props => [profile];
 }
 
-class LocationLoaded extends LocationEvent {
-  const LocationLoaded(this.profile);
-
-  final Profile profile;
-
-  @override
-  List<Object> get props => [profile];
-}
-
 class LocationUpdated extends LocationEvent {
   const LocationUpdated(this.city);
 

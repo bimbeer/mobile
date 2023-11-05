@@ -23,7 +23,6 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
         _locationRepository = locationRepository,
         super(LocationInitial()) {
     on<LocationInitialized>(_onLocationInitialized);
-    on<LocationLoaded>(_onLocationLoaded);
     on<LocationUpdated>(_onLocationUpdated);
     on<RangeValueChanged>(_onRangeValueChanged);
     on<LocationInputValueChanged>(
@@ -40,20 +39,21 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   void _onLocationInitialized(
       LocationInitialized event, Emitter<LocationState> emit) {
-    final location = LocationInput.dirty(event.profile.location!.label ?? '');
+    final location = event.profile.location != null &&
+            event.profile.location?.label != null &&
+            event.profile.location!.label!.isNotEmpty
+        ? LocationInput.dirty(event.profile.location!.label!)
+        : const LocationInput.pure();
     final range = event.profile.range;
     emit(state.copyWith(
         locationInput: location, range: range, fetchedCities: [], city: null));
   }
 
-  void _onLocationLoaded(LocationLoaded event, Emitter<LocationState> emit) {
-    final location = LocationInput.dirty(event.profile.location?.label ?? '');
-    final range = event.profile.range;
-    emit(state.copyWith(locationInput: location, range: range));
-  }
-
   void _onLocationUpdated(LocationUpdated event, Emitter<LocationState> emit) {
-    final location = LocationInput.dirty(event.city.address.label ?? '');
+    final location =
+        event.city.address.label != null && event.city.address.label!.isNotEmpty
+            ? LocationInput.dirty(event.city.address.label!)
+            : const LocationInput.pure();
     emit(state.copyWith(
       locationInput: location,
       city: event.city,
@@ -63,39 +63,58 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   void _onLocationFormSubmitted(
       LocationFormSubmitted event, Emitter<LocationState> emit) async {
-    late final GeocodeCity city;
+    emit(state.copyWith(
+      status: FormzSubmissionStatus.inProgress,
+    ));
     if (state.locationInput.isNotValid) {
-      emit(state.copyWith(status: FormzSubmissionStatus.canceled));
+      emit(state.copyWith(
+          status: FormzSubmissionStatus.failure,
+          locationInput: LocationInput.dirty(state.locationInput.value)));
       return;
     }
-    if (state.city == null) {
+
+    try {
       final cities =
           await _locationRepository.fetchCityData(state.locationInput.value);
-      city = cities.first;
-    } else {
-      city = state.city!;
-    }
-    emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+      if (cities.isEmpty || cities.length > 1) {
+        emit(state.copyWith(
+            status: FormzSubmissionStatus.failure,
+            locationInput: LocationInput.dirty(state.locationInput.value)));
+        return;
+      }
+      final city = cities.first;
+      if (city.address.label != state.locationInput.value) {
+        emit(state.copyWith(
+            status: FormzSubmissionStatus.failure,
+            locationInput: LocationInput.dirty(state.locationInput.value)));
+        return;
+      }
 
-    final profile = event.profile;
-    final label = city.address.label;
-    final lat = city.position.lat;
-    final lng = city.position.lng;
-    final range = state.range;
+      final profile = event.profile;
+      final label = city.address.label;
+      final lat = city.position.lat;
+      final lng = city.position.lng;
+      final range = state.range;
 
-    final myGeoHash = MyGeoHash();
-    final geohash = myGeoHash.geoHashForLocation(GeoPoint(lat, lng));
+      final myGeoHash = MyGeoHash();
+      final geohash = myGeoHash.geoHashForLocation(GeoPoint(lat, lng));
 
-    var location = Location(
-        label: label,
-        position: Position(coordinates: [lat, lng], geohash: geohash));
+      var location = Location(
+          label: label,
+          position: Position(coordinates: [lat, lng], geohash: geohash));
 
-    final updatedProfile = profile.copyWith(location: location, range: range);
-    try {
-      _profileRepository.edit(id: event.userId, profile: updatedProfile);
-      emit(state.copyWith(status: FormzSubmissionStatus.success));
+      final updatedProfile = profile.copyWith(location: location, range: range);
+      try {
+        _profileRepository.edit(id: event.userId, profile: updatedProfile);
+        emit(state.copyWith(status: FormzSubmissionStatus.success));
+      } catch (e) {
+        emit(state.copyWith(status: FormzSubmissionStatus.failure));
+      }
     } catch (e) {
-      emit(state.copyWith(status: FormzSubmissionStatus.failure));
+      emit(state.copyWith(
+          status: FormzSubmissionStatus.failure,
+          locationInput: LocationInput.dirty(state.locationInput.value)));
+      return;
     }
   }
 

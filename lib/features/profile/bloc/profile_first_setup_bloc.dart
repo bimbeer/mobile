@@ -23,23 +23,15 @@ class ProfileFirstSetupBloc
         status: ProfileFirstSetupStatus.loading));
     final profile = await _profileRepository.get(event.userId);
     if (profile.isEmpty) {
-      emit(state.copyWith(status: ProfileFirstSetupStatus.notFinished));
+      emit(const ProfileFirstSetupState(status: ProfileFirstSetupStatus.notFinished));
     } else {
       final isPersonalInfoSet = _isPersonalInfoSet(profile);
       final isLocationInfoSet = _isLocationInfoSet(profile);
       final isBeerInfoSet = _isBeerInfoSet(profile);
       if (isPersonalInfoSet && isLocationInfoSet && isBeerInfoSet) {
-        emit(state.copyWith(
-            status: ProfileFirstSetupStatus.finished,
-            isPersonalInfoSet: isPersonalInfoSet,
-            isLocationInfoSet: isLocationInfoSet,
-            isBeerInfoSet: isBeerInfoSet));
+        emit(const ProfileFirstSetupState(status: ProfileFirstSetupStatus.finished));
       } else {
-        emit(state.copyWith(
-            status: ProfileFirstSetupStatus.notFinished,
-            isPersonalInfoSet: isPersonalInfoSet,
-            isLocationInfoSet: isLocationInfoSet,
-            isBeerInfoSet: isBeerInfoSet));
+        emit(const ProfileFirstSetupState(status: ProfileFirstSetupStatus.notFinished));
       }
     }
   }

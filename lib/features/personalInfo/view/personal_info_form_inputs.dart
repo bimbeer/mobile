@@ -66,7 +66,9 @@ class _UsernameInput extends StatelessWidget {
               },
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                errorText: state.username.error?.message,
+                errorText: state.username.isPure
+                    ? null
+                    : state.username.error?.message,
                 contentPadding: const EdgeInsets.only(left: 20),
                 filled: true,
               ),
@@ -98,7 +100,9 @@ class _FirstNameInput extends StatelessWidget {
               },
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                errorText: state.firstName.error?.message,
+                errorText: state.firstName.isPure
+                    ? null
+                    : state.firstName.error?.message,
                 contentPadding: const EdgeInsets.only(left: 20),
                 filled: true,
               ),
@@ -130,7 +134,9 @@ class _SecondNameInput extends StatelessWidget {
               },
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                errorText: state.lastName.error?.message,
+                errorText: state.lastName.isPure
+                    ? null
+                    : state.lastName.error?.message,
                 contentPadding: const EdgeInsets.only(left: 20),
                 filled: true,
               ),
@@ -265,7 +271,8 @@ class _GenderInput extends StatelessWidget {
                 genderPickerModal(context);
               },
               decoration: InputDecoration(
-                errorText: state.gender.error?.message,
+                errorText:
+                    state.gender.isPure ? null : state.gender.error?.message,
                 contentPadding: const EdgeInsets.only(left: 20),
                 filled: true,
               ),
@@ -362,7 +369,9 @@ class _InterestInput extends StatelessWidget {
                 interestPickerModal(context);
               },
               decoration: InputDecoration(
-                errorText: state.interest.error?.message,
+                errorText: state.interest.isPure
+                    ? null
+                    : state.interest.error?.message,
                 contentPadding: const EdgeInsets.only(left: 20),
                 filled: true,
               ),

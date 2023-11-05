@@ -2,7 +2,7 @@ part of 'personal_info_bloc.dart';
 
 class PersonalInfoState extends Equatable {
   const PersonalInfoState({
-    this.username = const Username.pure(),
+    this.username = const Username.dirty(),
     this.firstName = const FirstName.pure(),
     this.lastName = const LastName.pure(),
     this.age = const Age.pure(),

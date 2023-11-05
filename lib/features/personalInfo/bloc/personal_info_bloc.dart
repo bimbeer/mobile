@@ -34,27 +34,32 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
 
   void _onProfileFetched(
       PersonalInfoLoaded event, Emitter<PersonalInfoState> emit) {
-    final username = event.profile.username != null
-        ? Username.dirty(event.profile.username!)
-        : const Username.pure();
-    final firstName = event.profile.firstName != null
-        ? FirstName.dirty(event.profile.firstName!)
-        : const FirstName.pure();
-    final lastName = event.profile.lastName != null
-        ? LastName.dirty(event.profile.lastName!)
-        : const LastName.pure();
+    final username =
+        event.profile.username != null && event.profile.username!.isNotEmpty
+            ? Username.dirty(event.profile.username!)
+            : const Username.pure();
+    final firstName =
+        event.profile.firstName != null && event.profile.firstName!.isNotEmpty
+            ? FirstName.dirty(event.profile.firstName!)
+            : const FirstName.pure();
+    final lastName =
+        event.profile.lastName != null && event.profile.lastName!.isNotEmpty
+            ? LastName.dirty(event.profile.lastName!)
+            : const LastName.pure();
     final age = event.profile.age != null
         ? Age.dirty(event.profile.age!)
         : const Age.pure();
     final description = event.profile.description != null
         ? Description.dirty(event.profile.description!)
         : const Description.pure();
-    final gender = event.profile.gender != null
-        ? Gender.dirty(event.profile.gender!)
-        : const Gender.pure();
-    final interest = event.profile.interest != null
-        ? Interest.dirty(event.profile.interest!)
-        : const Interest.pure();
+    final gender =
+        event.profile.gender != null && event.profile.gender!.isNotEmpty
+            ? Gender.dirty(event.profile.gender!)
+            : const Gender.pure();
+    final interest =
+        event.profile.interest != null && event.profile.interest!.isNotEmpty
+            ? Interest.dirty(event.profile.interest!)
+            : const Interest.pure();
 
     emit(state.copyWith(
       username: username,
@@ -117,7 +122,15 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
         state.age.isNotValid | state.description.isNotValid ||
         state.gender.isNotValid ||
         state.interest.isNotValid) {
-      emit(state.copyWith(status: FormzSubmissionStatus.failure));
+      emit(state.copyWith(
+        status: FormzSubmissionStatus.failure,
+        username: Username.dirty(state.username.value),
+        firstName: FirstName.dirty(state.firstName.value),
+        lastName: LastName.dirty(state.lastName.value),
+        age: Age.dirty(state.age.value),
+        gender: Gender.dirty(state.gender.value),
+        interest: Interest.dirty(state.interest.value),
+      ));
       return;
     }
 

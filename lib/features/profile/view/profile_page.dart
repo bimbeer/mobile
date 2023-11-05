@@ -13,12 +13,6 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profileFirstSetupState = context.read<ProfileFirstSetupBloc>().state;
-    if (profileFirstSetupState.status == ProfileFirstSetupStatus.notFinished) {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          AppRoute.profileFirstSetupPage, (route) => false);
-    }
-
     return const ProfileView();
   }
 }

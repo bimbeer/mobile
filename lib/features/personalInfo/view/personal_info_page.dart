@@ -20,6 +20,7 @@ class PersonalInfoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: reset fields values on exit - without save
     return BlocListener<PersonalInfoBloc, PersonalInfoState>(
       listener: (context, state) {
         if (state.status == FormzSubmissionStatus.failure) {
