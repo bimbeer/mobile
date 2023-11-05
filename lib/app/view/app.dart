@@ -3,6 +3,7 @@ import 'package:bimbeer/features/chat/bloc/chat_bloc.dart';
 import 'package:bimbeer/features/chat/bloc/conversation_bloc.dart';
 import 'package:bimbeer/features/chat/data/repositories/message_repository.dart';
 import 'package:bimbeer/features/location/data/repositories/location_repository.dart';
+import 'package:bimbeer/features/profile/bloc/profile_first_setup_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -107,6 +108,9 @@ class BlocProviders extends StatelessWidget {
       messageRepository: context.read<MessageRepository>(),
     );
 
+    final profileFirstSetupBloc = ProfileFirstSetupBloc(
+        profileRepository: context.read<ProfileRepository>());
+
     final conversationBloc =
         ConversationBloc(messageRepository: context.read<MessageRepository>());
 
@@ -120,6 +124,7 @@ class BlocProviders extends StatelessWidget {
         BlocProvider.value(value: pairsBloc),
         BlocProvider.value(value: chatBloc),
         BlocProvider.value(value: conversationBloc),
+        BlocProvider.value(value: profileFirstSetupBloc),
       ],
       child: const AppStartupEventsDispatcher(),
     );
@@ -133,6 +138,8 @@ class AppStartupEventsDispatcher extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AppBloc, AppState>(builder: (context, state) {
       if (state.status == AppStatus.authenticated) {
+        context.read<ProfileFirstSetupBloc>().add(
+            ProfileFirstSetupStarted(context.read<AppBloc>().state.user.id));
         context
             .read<PersonalInfoBloc>()
             .add(PersonalInfoLoaded(context.read<AppBloc>().state.profile));

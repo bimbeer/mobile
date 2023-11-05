@@ -1,5 +1,6 @@
 import 'package:bimbeer/app/bloc/app_bloc.dart';
 import 'package:bimbeer/features/navigation/view/navigation_bar.dart';
+import 'package:bimbeer/features/profile/bloc/profile_first_setup_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,6 +13,12 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileFirstSetupState = context.read<ProfileFirstSetupBloc>().state;
+    if (profileFirstSetupState.status == ProfileFirstSetupStatus.notFinished) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          AppRoute.profileFirstSetupPage, (route) => false);
+    }
+
     return const ProfileView();
   }
 }

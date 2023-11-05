@@ -5,6 +5,7 @@ import 'package:bimbeer/features/chat/view/chat_list_page.dart';
 import 'package:bimbeer/features/chat/view/conversation_page.dart';
 import 'package:bimbeer/features/location/view/location_page.dart';
 import 'package:bimbeer/features/pairs/view/pairs_page.dart';
+import 'package:bimbeer/features/profile/view/profile_first_setup_page.dart';
 import 'package:bimbeer/features/profile/view/profile_page.dart';
 import 'package:flutter/material.dart';
 
@@ -40,6 +41,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const ChatListPage());
       case AppRoute.chatPage:
         return MaterialPageRoute(builder: (_) => const ConversationPage());
+      case AppRoute.profileFirstSetupPage:
+        return MaterialPageRoute(builder: (_) => const ProfileFirstSetupPage());
       default:
         return MaterialPageRoute(builder: (_) => const SplashPage());
     }
@@ -59,4 +62,5 @@ abstract class AppRoute {
   static const String settings = '/settings';
   static const String chatList = '/chat-list';
   static const String chatPage = '/chat-page';
+  static const String profileFirstSetupPage = '/profile-first-setup';
 }

@@ -21,34 +21,32 @@ class BeerTiles extends StatelessWidget {
           ),
         );
       } else {
-        return Expanded(
-          child: GridView.builder(
-            itemCount: state.beers.length,
-            itemBuilder: (BuildContext context, int index) {
-              if (state.status == BeerListStatus.loading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (state.status == BeerListStatus.updateFailed) {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(const SnackBar(
-                      duration: Duration(seconds: 2),
-                      content: Text('Could not update selected beer.')));
-              } else if (state.status == BeerListStatus.loaded ||
-                  state.status == BeerListStatus.updated) {
-                return BeerTile(beer: state.beers[index]);
-              }
-              return null;
-            },
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 20,
-              mainAxisSpacing: 20,
-            ),
-            padding: const EdgeInsets.all(40),
-            shrinkWrap: true,
+        return GridView.builder(
+          physics: const ClampingScrollPhysics(),
+          itemCount: state.beers.length,
+          itemBuilder: (BuildContext context, int index) {
+            if (state.status == BeerListStatus.loading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state.status == BeerListStatus.updateFailed) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(const SnackBar(
+                    duration: Duration(seconds: 2),
+                    content: Text('Could not update selected beer.')));
+            } else if (state.status == BeerListStatus.loaded ||
+                state.status == BeerListStatus.updated) {
+              return BeerTile(beer: state.beers[index]);
+            }
+            return null;
+          },
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 20,
+            mainAxisSpacing: 20,
           ),
+          shrinkWrap: true,
         );
       }
     });
