@@ -1,7 +1,16 @@
+import 'package:bimbeer/app/bloc/app_bloc.dart';
+import 'package:bimbeer/core/router/app_router.dart';
+import 'package:bimbeer/features/beer/bloc/beer_list_bloc.dart';
 import 'package:bimbeer/features/beer/view/beer_tiles.dart';
+import 'package:bimbeer/features/location/bloc/location_bloc.dart';
 import 'package:bimbeer/features/location/view/location_form_inputs.dart';
+import 'package:bimbeer/features/personalInfo/bloc/personal_info_bloc.dart';
 import 'package:bimbeer/features/personalInfo/view/personal_info_form_inputs.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
+
+enum ProfileFirstSetupStep { personalInfo, location, beers }
 
 class ProfileFirstSetupPage extends StatelessWidget {
   const ProfileFirstSetupPage({super.key});
@@ -22,57 +31,108 @@ class _ProfileFirstSetupViewState extends State<_ProfileFirstSetupView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).canvasColor,
-      body: SafeArea(
-        child: Stepper(
-          
-          type: StepperType.horizontal,
-          currentStep: _step,
-          onStepCancel: () {
-            setState(() {
-              if (_step > 0) {
-              _step -= 1;
-              }
-            });
-          },
-          onStepContinue: () {
-            setState(() {
-              // if (_step == 2) {
-              //   context.read<ProfileFirstSetupBloc>().add(
-              //       ProfileFirstSetupFinished(
-              //           context.read<ProfileFirstSetupBloc>().state.profile));
-              // }
-              _step += 1;
-            });
-          },
-          onStepTapped: (int value) {
-            setState(() {
-              _step = value;
-            });
-          },
-          steps: <Step>[
-            Step(
-              isActive: _step >= 0,
-              state: _step <= 0 ? StepState.editing : StepState.complete,
-              title: const Text('Personal Information'),
-              content: const PersonalInfoFormInputs(),
+    return Builder(builder: (context) {
+      final personalInfoState = context.watch<PersonalInfoBloc>().state;
+      final locationState = context.watch<LocationBloc>().state;
+      final beerListBlocState = context.watch<BeerListBloc>().state;
+
+      final isLoading =
+          personalInfoState.status == FormzSubmissionStatus.inProgress ||
+              locationState.status == FormzSubmissionStatus.inProgress ||
+              beerListBlocState.status == BeerListStatus.loading;
+
+      int getCurrentStep() {
+        if (_step == ProfileFirstSetupStep.location.index) {
+          if (personalInfoState.status == FormzSubmissionStatus.success) {
+            return _step;
+          }
+          return _step - 1;
+        } else if (_step == ProfileFirstSetupStep.beers.index) {
+          if (locationState.status == FormzSubmissionStatus.success) {
+            return _step;
+          }
+          return _step - 1;
+        } else {
+          return _step;
+        }
+      }
+
+      return Scaffold(
+        backgroundColor: Theme.of(context).canvasColor,
+        body: SafeArea(
+          child: Stack(children: [
+            isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Container(),
+            Opacity(
+              opacity: isLoading ? 0.5 : 1,
+              child: Stepper(
+                type: StepperType.horizontal,
+                currentStep: getCurrentStep(),
+                onStepCancel: () {
+                  setState(() {
+                    if (_step > 0) {
+                      _step -= 1;
+                    }
+                  });
+                },
+                onStepContinue: () {
+                  final userId = context.read<AppBloc>().state.user.id;
+                  final profile = context.read<AppBloc>().state.profile;
+                  if (_step ==
+                      ProfileFirstSetupStep.personalInfo.index) {
+                    context
+                        .read<PersonalInfoBloc>()
+                        .add(FormSubmitted(userId: userId, profile: profile));
+                    setState(() => _step += 1);
+                  } else if (_step ==
+                      ProfileFirstSetupStep.location.index) {
+                    context.read<LocationBloc>().add(LocationFormSubmitted(
+                        userId: userId, profile: profile));
+                    setState(() => _step += 1);
+                  } else if (_step ==
+                      ProfileFirstSetupStep.beers.index) {
+                    if (beerListBlocState.beers.isNotEmpty) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          AppRoute.profile, (route) => false);
+                    }
+                  }
+                },
+                steps: <Step>[
+                  Step(
+                    isActive: _step >=
+                        ProfileFirstSetupStep.personalInfo.index,
+                    state: _step <=
+                            ProfileFirstSetupStep.personalInfo.index
+                        ? StepState.editing
+                        : StepState.complete,
+                    title: const Text('Personal Information'),
+                    content: const PersonalInfoFormInputs(),
+                  ),
+                  Step(
+                    isActive:
+                        _step >= ProfileFirstSetupStep.location.index,
+                    state: _step <= ProfileFirstSetupStep.location.index
+                        ? StepState.editing
+                        : StepState.complete,
+                    title: const Text('Location'),
+                    content: const LocationFormInputs(),
+                  ),
+                  Step(
+                    isActive:
+                        _step >= ProfileFirstSetupStep.beers.index,
+                    state: StepState.complete,
+                    title: const Text('Beers'),
+                    content: const SingleChildScrollView(child: BeerTiles()),
+                  ),
+                ],
+              ),
             ),
-            Step(
-              isActive: _step >= 1,
-              state: _step <= 1 ? StepState.editing : StepState.complete,
-              title: const Text('Location'),
-              content: const LocationFormInputs(),
-            ),
-            Step(
-              isActive: _step >= 2,
-              state: StepState.complete,
-              title: const Text('Beers'),
-              content: const SingleChildScrollView(child: BeerTiles()),
-            ),
-          ],
+          ]),
         ),
-      ),
-    );
+      );
+    });
   }
 }

@@ -34,9 +34,8 @@ class SplashPage extends StatelessWidget {
               Navigator.of(context).pushNamedAndRemoveUntil(
                   AppRoute.profileFirstSetupPage, (route) => false);
             } else if (state.status == ProfileFirstSetupStatus.finished) {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                  AppRoute.profile, (route) => false);
-              // AppRoute.profile, (route) => false);
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil(AppRoute.profile, (route) => false);
             }
           },
         ),

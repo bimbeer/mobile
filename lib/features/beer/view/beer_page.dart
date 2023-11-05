@@ -26,7 +26,11 @@ class BeerView extends StatelessWidget {
             EditScreenTitle(
               pageTitle: 'Pick your favorite beers',
             ),
-            BeerTiles()
+            Expanded(
+                child: Padding(
+              padding: EdgeInsets.all(20),
+              child: BeerTiles(),
+            ))
           ],
         ),
       ),
