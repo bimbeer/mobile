@@ -15,7 +15,8 @@ class _AppUserChanged extends AppEvent {
 }
 
 class _AppUserProfileChanged extends AppEvent {
-  const _AppUserProfileChanged(this.profile);
+  const _AppUserProfileChanged({required this.user, required this.profile});
 
+  final User user;
   final Profile profile;
 }

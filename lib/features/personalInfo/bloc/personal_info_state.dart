@@ -2,7 +2,7 @@ part of 'personal_info_bloc.dart';
 
 class PersonalInfoState extends Equatable {
   const PersonalInfoState({
-    this.username = const Username.dirty(),
+    this.username = const Username.pure(),
     this.firstName = const FirstName.pure(),
     this.lastName = const LastName.pure(),
     this.age = const Age.pure(),
@@ -12,6 +12,15 @@ class PersonalInfoState extends Equatable {
     this.status = FormzSubmissionStatus.initial,
     this.errorMessage,
   });
+
+  get isPure => 
+    username.isPure && 
+    firstName.isPure &&
+    lastName.isPure &&
+    age.isPure &&
+    description.isPure && 
+    gender.isPure &&
+    interest.isPure;
 
   final Username username;
   final FirstName firstName;
@@ -59,5 +68,6 @@ class PersonalInfoState extends Equatable {
         interest,
         status,
         errorMessage,
+        isPure,
       ];
 }

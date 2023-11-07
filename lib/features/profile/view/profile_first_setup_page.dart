@@ -33,9 +33,20 @@ class _ProfileFirstSetupViewState extends State<_ProfileFirstSetupView> {
   @override
   Widget build(BuildContext context) {
     return Builder(builder: (context) {
+      final appState = context.watch<AppBloc>().state;
       final personalInfoState = context.watch<PersonalInfoBloc>().state;
       final locationState = context.watch<LocationBloc>().state;
       final beerListBlocState = context.watch<BeerListBloc>().state;
+
+      if (personalInfoState.isPure && !appState.profile.isEmpty) {
+        context
+            .read<PersonalInfoBloc>()
+            .add(PersonalInfoLoaded(appState.profile));
+        context.read<LocationBloc>().add(LocationInitialized(appState.profile));
+        context
+            .read<BeerListBloc>()
+            .add(BeerListFetched(profile: appState.profile));
+      }
 
       final isLoading =
           personalInfoState.status == FormzSubmissionStatus.inProgress ||
@@ -82,13 +93,15 @@ class _ProfileFirstSetupViewState extends State<_ProfileFirstSetupView> {
                     context
                         .read<PersonalInfoBloc>()
                         .add(FormSubmitted(userId: userId, profile: profile));
-                    setState(() => _futureStep = ProfileFirstSetupStep.location.index);
+                    setState(() =>
+                        _futureStep = ProfileFirstSetupStep.location.index);
                   } else if (_step == ProfileFirstSetupStep.location.index) {
                     context.read<LocationBloc>().add(LocationFormSubmitted(
                         userId: userId, profile: profile));
-                    setState(() => _futureStep =  ProfileFirstSetupStep.beers.index);
+                    setState(
+                        () => _futureStep = ProfileFirstSetupStep.beers.index);
                   } else if (_step == ProfileFirstSetupStep.beers.index) {
-                    if (beerListBlocState.beers.isNotEmpty) {
+                    if (beerListBlocState.selectedBeers.isNotEmpty) {
                       Navigator.of(context).pushNamedAndRemoveUntil(
                           AppRoute.profile, (route) => false);
                     }

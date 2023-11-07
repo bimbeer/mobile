@@ -37,7 +37,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       var profile = await _getUserProfile(user.id);
       emit(AppState.authenticated(event.user, profile));
       _profileRepository.profileStream(user.id).listen((profile) {
-        add(_AppUserProfileChanged(profile));
+        add(_AppUserProfileChanged(user: user, profile: profile));
       });
     } else {
       emit(const AppState.unauthenticated());
@@ -45,7 +45,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void _onProfileChanged(_AppUserProfileChanged event, Emitter<AppState> emit) {
-    emit(AppState.authenticated(state.user, event.profile));
+    emit(AppState.authenticated(event.user, event.profile));
   }
 
   void _onLogoutRequested(AppLogoutRequested event, Emitter<AppState> emit) {

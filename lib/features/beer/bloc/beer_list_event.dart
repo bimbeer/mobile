@@ -7,6 +7,10 @@ abstract class BeerListEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class _BeerListInitialized extends BeerListEvent {
+  const _BeerListInitialized();
+}
+
 class BeerListFetched extends BeerListEvent {
   const BeerListFetched({required this.profile});
 

@@ -268,6 +268,10 @@ class _GenderInput extends StatelessWidget {
               key: const Key('editProfileForm_genderInput_textField'),
               readOnly: true,
               onTap: () {
+                final gender = state.gender.value;
+                context
+                    .read<PersonalInfoBloc>()
+                    .add(GenderChanged(numberToGender(gender.toString())));
                 genderPickerModal(context);
               },
               decoration: InputDecoration(
@@ -283,33 +287,33 @@ class _GenderInput extends StatelessWidget {
     );
   }
 
+  String numberToGender(String value) {
+    switch (value) {
+      case '0':
+        return 'Man';
+      case '1':
+        return 'Woman';
+      case '2':
+        return 'Other';
+      default:
+        return 'Man';
+    }
+  }
+
+  int genderToNumber(String value) {
+    switch (value) {
+      case 'Man':
+        return 0;
+      case 'Woman':
+        return 1;
+      case 'Other':
+        return 2;
+      default:
+        return 0;
+    }
+  }
+
   Future<dynamic> genderPickerModal(BuildContext context) {
-    String numberToGender(String value) {
-      switch (value) {
-        case '0':
-          return 'Man';
-        case '1':
-          return 'Woman';
-        case '2':
-          return 'Other';
-        default:
-          return 'Man';
-      }
-    }
-
-    int genderToNumber(String value) {
-      switch (value) {
-        case 'Man':
-          return 0;
-        case 'Woman':
-          return 1;
-        case 'Other':
-          return 2;
-        default:
-          return 0;
-      }
-    }
-
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -366,6 +370,9 @@ class _InterestInput extends StatelessWidget {
               key: const Key('editProfileForm_interestInput_textField'),
               readOnly: true,
               onTap: () {
+                final interest = state.interest.value;
+                context.read<PersonalInfoBloc>().add(
+                    InterestChanged(numberToInterest(interest.toString())));
                 interestPickerModal(context);
               },
               decoration: InputDecoration(
@@ -382,33 +389,33 @@ class _InterestInput extends StatelessWidget {
     );
   }
 
+  String numberToInterest(String value) {
+    switch (value) {
+      case '0':
+        return 'Man';
+      case '1':
+        return 'Woman';
+      case '2':
+        return 'All';
+      default:
+        return 'Man';
+    }
+  }
+
+  int interestToNumber(String value) {
+    switch (value) {
+      case 'Man':
+        return 0;
+      case 'Woman':
+        return 1;
+      case 'All':
+        return 2;
+      default:
+        return 0;
+    }
+  }
+
   Future<dynamic> interestPickerModal(BuildContext context) {
-    String numberToInterest(String value) {
-      switch (value) {
-        case '0':
-          return 'Man';
-        case '1':
-          return 'Woman';
-        case '2':
-          return 'All';
-        default:
-          return 'Man';
-      }
-    }
-
-    int interestToNumber(String value) {
-      switch (value) {
-        case 'Man':
-          return 0;
-        case 'Woman':
-          return 1;
-        case 'All':
-          return 2;
-        default:
-          return 0;
-      }
-    }
-
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {

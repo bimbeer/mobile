@@ -1,6 +1,5 @@
 import 'package:bimbeer/app/bloc/app_bloc.dart';
 import 'package:bimbeer/features/navigation/view/navigation_bar.dart';
-import 'package:bimbeer/features/profile/bloc/profile_first_setup_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -74,32 +73,34 @@ class ProfileView extends StatelessWidget {
               const SizedBox(
                 height: 40,
               ),
-              GridView.count(
-                padding: const EdgeInsets.symmetric(horizontal: 100),
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 30,
-                shrinkWrap: true,
-                crossAxisCount: 2,
-                children: const [
-                  ButtonTile(
-                    label: 'Profile',
-                    icon: Icons.edit,
-                    route: AppRoute.editProfile,
-                  ),
-                  ButtonTile(
-                      label: 'Distance',
-                      icon: Icons.map,
-                      route: AppRoute.location),
-                  ButtonTile(
-                    label: 'Settings',
-                    icon: Icons.settings,
-                    route: AppRoute.settings,
-                  ),
-                  ButtonTile(
-                      label: 'Beers',
-                      icon: Icons.wine_bar,
-                      route: AppRoute.pickBeer),
-                ],
+              Expanded(
+                child: GridView.count(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 30,
+                  shrinkWrap: true,
+                  crossAxisCount: 2,
+                  children: const [
+                    ButtonTile(
+                      label: 'Profile',
+                      icon: Icons.edit,
+                      route: AppRoute.editProfile,
+                    ),
+                    ButtonTile(
+                        label: 'Distance',
+                        icon: Icons.map,
+                        route: AppRoute.location),
+                    ButtonTile(
+                      label: 'Settings',
+                      icon: Icons.settings,
+                      route: AppRoute.settings,
+                    ),
+                    ButtonTile(
+                        label: 'Beers',
+                        icon: Icons.wine_bar,
+                        route: AppRoute.pickBeer),
+                  ],
+                ),
               ),
             ]),
           ),

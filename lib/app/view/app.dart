@@ -3,7 +3,9 @@ import 'package:bimbeer/features/chat/bloc/chat_bloc.dart';
 import 'package:bimbeer/features/chat/bloc/conversation_bloc.dart';
 import 'package:bimbeer/features/chat/data/repositories/message_repository.dart';
 import 'package:bimbeer/features/location/data/repositories/location_repository.dart';
-import 'package:bimbeer/features/profile/bloc/profile_first_setup_bloc.dart';
+import 'package:bimbeer/features/onboard/view/onboard_page.dart';
+import 'package:bimbeer/features/profile/view/profile_first_setup_page.dart';
+import 'package:bimbeer/features/profile/view/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,6 +24,8 @@ import '../bloc/app_bloc.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
+
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -108,9 +112,6 @@ class BlocProviders extends StatelessWidget {
       messageRepository: context.read<MessageRepository>(),
     );
 
-    final profileFirstSetupBloc = ProfileFirstSetupBloc(
-        profileRepository: context.read<ProfileRepository>());
-
     final conversationBloc =
         ConversationBloc(messageRepository: context.read<MessageRepository>());
 
@@ -124,7 +125,6 @@ class BlocProviders extends StatelessWidget {
         BlocProvider.value(value: pairsBloc),
         BlocProvider.value(value: chatBloc),
         BlocProvider.value(value: conversationBloc),
-        BlocProvider.value(value: profileFirstSetupBloc),
       ],
       child: const AppStartupEventsDispatcher(),
     );
@@ -136,26 +136,56 @@ class AppStartupEventsDispatcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AppBloc, AppState>(builder: (context, state) {
-      if (state.status == AppStatus.authenticated) {
-        context.read<ProfileFirstSetupBloc>().add(
-            ProfileFirstSetupStarted(context.read<AppBloc>().state.user.id));
+    return BlocListener<AppBloc, AppState>(
+      listenWhen: (previous, current) =>
+          previous.profile.isFullySet != current.profile.isFullySet || !current.profile.isFullySet,
+      listener: (context, state) {
         context
             .read<PersonalInfoBloc>()
             .add(PersonalInfoLoaded(context.read<AppBloc>().state.profile));
         context
             .read<LocationBloc>()
             .add(LocationInitialized(context.read<AppBloc>().state.profile));
-        context.read<BeerListBloc>().add(
-            BeerListFetched(profile: context.read<AppBloc>().state.profile));
         context
             .read<PairsBloc>()
             .add(PairsFetched(context.read<AppBloc>().state.user.id));
         context.read<ChatBloc>().add(
             ChatListFetched(userId: context.read<AppBloc>().state.user.id));
-      }
-      return AppRunner();
-    });
+        context.read<BeerListBloc>().add(
+            BeerListFetched(profile: context.read<AppBloc>().state.profile));
+      },
+      child: const AppNavigationListener(),
+    );
+  }
+}
+
+class AppNavigationListener extends StatelessWidget {
+  const AppNavigationListener({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<AppBloc, AppState>(
+      listenWhen: (previous, current) => previous.status != current.status,
+      listener: (context, state) {
+        if (state.status == AppStatus.unauthenticated) {
+          App.navigatorKey.currentState?.pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const OnboardPage()),
+              (Route<dynamic> route) => false);
+        } else if (state.status == AppStatus.authenticated) {
+          if (!state.profile.isFullySet) {
+            App.navigatorKey.currentState?.pushAndRemoveUntil(
+                MaterialPageRoute(
+                    builder: (_) => const ProfileFirstSetupPage()),
+                (Route<dynamic> route) => false);
+          } else if (state.profile.isFullySet) {
+            App.navigatorKey.currentState?.pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const ProfilePage()),
+                (Route<dynamic> route) => false);
+          }
+        }
+      },
+      child: AppRunner(),
+    );
   }
 }
 
@@ -174,6 +204,7 @@ class AppRunner extends StatelessWidget {
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: ThemeMode.dark,
+          navigatorKey: App.navigatorKey,
         );
       },
     );

@@ -111,6 +111,31 @@ class Profile extends Equatable {
     );
   }
 
+  bool get isFullySet =>
+      _isPersonalInfoSet && _isLocationInfoSet && _isBeerInfoSet;
+
+  bool get _isPersonalInfoSet =>
+      firstName != null &&
+      firstName!.isNotEmpty &&
+      lastName != null &&
+      lastName!.isNotEmpty &&
+      username != null &&
+      username!.isNotEmpty &&
+      age != null &&
+      gender != null &&
+      gender!.isNotEmpty &&
+      interest != null &&
+      interest!.isNotEmpty;
+
+  bool get _isLocationInfoSet =>
+      location != null &&
+      location?.label != null &&
+      location!.label!.isNotEmpty &&
+      range != null &&
+      range! > 0;
+
+  bool get _isBeerInfoSet => beers != null && beers!.isNotEmpty;
+
   @override
   List<Object?> get props => [
         firstName,
@@ -126,6 +151,7 @@ class Profile extends Equatable {
         isLocal,
         location,
         range,
+        isFullySet,
       ];
 }
 

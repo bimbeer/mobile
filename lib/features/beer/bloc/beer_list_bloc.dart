@@ -18,12 +18,33 @@ class BeerListBloc extends Bloc<BeerListEvent, BeerListState> {
   })  : _storageRepository = storageRepository,
         _profileRepository = profileRepository,
         super(const BeerListState()) {
+    on<_BeerListInitialized>(_onBeersInitialized);
     on<BeerListFetched>(_onBeersFetched);
     on<BeerToggled>(_onBeerToggled);
+
+    add(const _BeerListInitialized());
   }
 
   final StorageRepository _storageRepository;
   final ProfileRepository _profileRepository;
+
+  Future<void> _onBeersInitialized(
+      _BeerListInitialized event, Emitter<BeerListState> emit) async {
+    try {
+      emit(state.copyWith(status: BeerListStatus.loading));
+      final beerURLs =
+          await _storageRepository.getAllFiles(storagePath: 'beers');
+      final beers = beerURLs
+          .map((e) =>
+              Beer(link: e, name: BeerListUtil.getBeerNameByLink(e) ?? ''))
+          .toList();
+
+      emit(state.copyWith(
+          status: BeerListStatus.loaded, beers: beers, selectedBeers: []));
+    } catch (e) {
+      emit(state.copyWith(status: BeerListStatus.loadingFailed));
+    }
+  }
 
   Future<void> _onBeersFetched(
       BeerListFetched event, Emitter<BeerListState> emit) async {
