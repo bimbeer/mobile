@@ -19,6 +19,7 @@ class SignUpForm extends StatelessWidget {
     return MultiBlocListener(
       listeners: [
         BlocListener<SignUpCubit, SignUpState>(
+          listenWhen: (previous, current) => previous.status != current.status,
           listener: (context, state) {
             if (state.status.isSuccess) {
               Navigator.of(context)
