@@ -133,17 +133,25 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         .streamGetAllInteractionsForUser(userId)
         .listen((interactions) async {
       if (interactions.isNotEmpty) {
-        final newInteraction = interactions.last;
+        final newInteraction = interactions.first;
         if (newInteraction.reactionType == 'like') {
           final userIsSender = newInteraction.sender == userId;
-          final counterInteraction = interactions.firstWhereOrNull(
-              (interaction) =>
-                  interaction.sender == newInteraction.recipient &&
-                  interaction.recipient == newInteraction.sender);
+          final pairId =
+              userIsSender ? newInteraction.recipient : newInteraction.sender;
+
+          Interaction? counterInteraction;
+          if (userIsSender) {
+            counterInteraction = interactions.firstWhereOrNull((interaction) =>
+                interaction.sender == pairId &&
+                interaction.recipient == userId);
+          } else {
+            counterInteraction = interactions.firstWhereOrNull((interaction) =>
+                interaction.recipient == pairId &&
+                interaction.sender == userId);
+          }
+
           if (counterInteraction != null &&
               counterInteraction.reactionType == 'like') {
-            final pairId =
-                userIsSender ? newInteraction.recipient : newInteraction.sender;
             if (!chatDetails.any((element) => element.pairUserId == pairId)) {
               final pairProfile = await _profileRepository.get(pairId);
               final detailedChat = ChatDetails(

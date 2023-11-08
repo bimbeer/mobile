@@ -1,5 +1,6 @@
 import 'package:bimbeer/features/pairs/models/interaction.dart';
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../profile/data/repositories/profile_repository.dart';
@@ -55,7 +56,8 @@ class PairsBloc extends Bloc<PairsEvent, PairsState> {
     final interaction = Interaction(
         reactionType: like,
         recipient: event.matchingProfile.id,
-        sender: event.userId);
+        sender: event.userId,
+        timestamp: Timestamp.now());
 
     _interactionsRepository.addInteraction(interaction);
   }
@@ -64,7 +66,8 @@ class PairsBloc extends Bloc<PairsEvent, PairsState> {
     final interaction = Interaction(
         reactionType: dislike,
         recipient: event.matchingProfile.id,
-        sender: event.userId);
+        sender: event.userId,
+        timestamp: Timestamp.now());
 
     _interactionsRepository.addInteraction(interaction);
   }

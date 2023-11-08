@@ -37,6 +37,7 @@ class InteractionsRepository {
         .collection('interactions')
         .where(Filter.or(Filter('sender', isEqualTo: userId),
             Filter('recipient', isEqualTo: userId)))
+        .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => Interaction.fromJson(doc.data()))
