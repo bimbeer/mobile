@@ -1,5 +1,7 @@
+import 'package:bimbeer/app/bloc/app_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../bloc/avatar_bloc.dart';
 import '../select_avatar_options_page.dart';
 
@@ -36,12 +38,14 @@ class AvatarView extends StatelessWidget {
         onTap: () {
           _showSelectPhotoOptions(context);
         },
-        child: BlocBuilder<AvatarBloc, AvatarState>(
+        child: BlocBuilder<AppBloc, AppState>(
+          buildWhen: (previous, current) =>
+              previous.profile.avatar != current.profile.avatar,
           builder: (context, state) {
-            if (state.avatar != null && state.avatar != '') {
+            if (state.profile.avatar != null && state.profile.avatar != '') {
               return CircleAvatar(
                 radius: 80,
-                backgroundImage: NetworkImage(state.avatar!),
+                backgroundImage: NetworkImage(state.profile.avatar!),
               );
             } else {
               return const CircleAvatar(
